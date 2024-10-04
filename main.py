@@ -14,20 +14,40 @@ from Potentiel import*
 
 from RK2 import*
 
-
-
-if __name__ == "__main__" :
-        
-    wn = np.array([1,1,0,1])
-    N = 100000
-
+def Orbite(wn, N, Methode = RK2) :
+    
     Trajectoire = np.zeros((4,N))
 
     for i in range(N) : 
         Trajectoire[:,i] = wn
-        wn = RK2(wn, f, 1e-3,pot=Kepler)
-        
-    plt.figure(2)
+        wn = Methode(wn, f, 1e-3,pot=Kepler)
 
-    plt.scatter(Trajectoire[0],Trajectoire[1],s=1)
+    return Trajectoire
+
+if __name__ == "__main__" :
+
+
+    # RK2    
+    wn = np.array([1,0,0,1])
+    N = 10000
+
+    Trajectoire_RK2 = Orbite(wn, N, RK2)
+        
+    fig = plt.figure()
+
+    XY = fig.add_subplot(211)
+    PXPY = fig.add_subplot(212)
+
+    XY.set_xlabel("X")
+    XY.set_ylabel("Y")
+
+    PXPY.set_xlabel("Px")
+    PXPY.set_ylabel("Py")
+
+    XY.scatter(Trajectoire_RK2[0],Trajectoire_RK2[1],s=1, label="RK2")
+    PXPY.scatter(Trajectoire_RK2[2],Trajectoire_RK2[3],s=1, label="RK2")
+
+    XY.legend()
+    PXPY.legend()
+
     plt.show()
