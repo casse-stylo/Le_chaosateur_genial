@@ -8,3 +8,26 @@
 # 
 
 import numpy as np
+import numpy as np
+import matplotlib.pyplot as plt
+from Potentiel import*
+
+from RK2 import*
+
+
+
+if __name__ == "__main__" :
+        
+    wn = np.array([1,1,0,1])
+    N = 100000
+
+    Trajectoire = np.zeros((4,N))
+
+    for i in range(N) : 
+        Trajectoire[:,i] = wn
+        wn = RK2(wn, f, 1e-3,pot=Kepler)
+        
+    plt.figure(2)
+
+    plt.scatter(Trajectoire[0],Trajectoire[1],s=1)
+    plt.show()

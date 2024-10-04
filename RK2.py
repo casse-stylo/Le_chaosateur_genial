@@ -7,17 +7,10 @@ from Potentiel import*
 def f(wn, pot=Kepler):
     return np.array([wn[2], wn[3], -Fx(pot,wn[0], wn[1]), -Fy(pot,wn[0], wn[1])])
 
-def RK2 (wn, f, h):
+def RK2 (wn, f, h, pot):
 
-    wn12 = wn + h*0.5*f(wn)
-    wn12p = f(wn12)
+    wn12 = wn + h*0.5*f(wn,pot)
+    wn12p = f(wn12,pot)
 
     return wn + h*wn12p
 
-wn = np.array([1,0,0,1])
-
-for i in range(1000) : 
-    wn = RK2(wn, f, 1e-2)
-    plt.scatter(wn[0],wn[1])
-
-plt.show()
