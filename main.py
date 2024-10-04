@@ -26,13 +26,7 @@ def Orbite(wn, N, h, Methode, pot) :
 
     return Trajectoire
 
-if __name__ == "__main__" :
-
-
-    wn = np.array([0.1,0,0.1,0.2])
-    N = 10000
-    h = 1e-3
-    pot = Henon_Heiles
+def Plot_Trajectoires(wn, N, h, pot) :
 
     Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
@@ -49,6 +43,8 @@ if __name__ == "__main__" :
     PXPY.set_xlabel("Px")
     PXPY.set_ylabel("Py")
 
+    
+
     XY.scatter(Trajectoire_Euler[0],Trajectoire_Euler[1],s=1, label="Euler",color="red")
     PXPY.scatter(Trajectoire_Euler[2],Trajectoire_Euler[3],s=1, label="Euler",color="red")
 
@@ -64,3 +60,30 @@ if __name__ == "__main__" :
     PXPY.legend()
 
     plt.show()
+
+def Poincarre(wn, N, h, pot):
+    Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
+
+    plt.plot(Trajectoire_RK4[1], Trajectoire_RK4[3])
+
+    axes = plt.gca()
+    axes.set_xlabel("Y")
+    axes.set_ylabel("V")
+
+    plt.show()
+
+
+
+if __name__ == "__main__" :
+
+
+    wn = np.array([0,0.1,0,0.097])
+    N = 100000
+    h = 1e-3
+    pot = Henon_Heiles
+
+    #Plot_Trajectoires(wn, N, h, pot)
+    Poincarre (wn, N, h, pot)
+
+
+    
