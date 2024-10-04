@@ -16,27 +16,27 @@ from RK2 import*
 from Euler import*
 from RK4 import*
 
-def Orbite(wn, N, h, Methode = RK2) :
+def Orbite(wn, N, h, Methode, pot) :
     
     Trajectoire = np.zeros((4,N))
 
     for i in range(N) : 
         Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot=Kepler)
+        wn = Methode(wn, f, h,pot)
 
     return Trajectoire
 
 if __name__ == "__main__" :
 
 
-    wn = np.array([1,0,0,1])
-    N = 100000
+    wn = np.array([0.1,0,0.1,0.2])
+    N = 10000
     h = 1e-3
+    pot = Henon_Heiles
 
-    Trajectoire_RK2 = Orbite(wn, N, h, RK2)
-    Trajectoire_RK4 = Orbite(wn, N, h, RK4)
-
-    Trajectoire_Euler = Orbite(wn, N, h, Euler)
+    Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
+    Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
+    Trajectoire_Euler = Orbite(wn, N, h, Euler,pot)
         
     fig = plt.figure()
 
