@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from Potentiel import*
 
 from RK2 import*
+from Euler import*
 
 def Orbite(wn, N, Methode = RK2) :
     
@@ -27,11 +28,11 @@ def Orbite(wn, N, Methode = RK2) :
 if __name__ == "__main__" :
 
 
-    # RK2    
     wn = np.array([1,0,0,1])
     N = 10000
 
     Trajectoire_RK2 = Orbite(wn, N, RK2)
+    Trajectoire_Euler = Orbite(wn, N, Euler)
         
     fig = plt.figure()
 
@@ -46,6 +47,10 @@ if __name__ == "__main__" :
 
     XY.scatter(Trajectoire_RK2[0],Trajectoire_RK2[1],s=1, label="RK2")
     PXPY.scatter(Trajectoire_RK2[2],Trajectoire_RK2[3],s=1, label="RK2")
+
+    XY.scatter(Trajectoire_Euler[0],Trajectoire_Euler[1],s=1, label="Euler",color="red")
+    PXPY.scatter(Trajectoire_Euler[2],Trajectoire_Euler[3],s=1, label="Euler",color="red")
+
 
     XY.legend()
     PXPY.legend()
