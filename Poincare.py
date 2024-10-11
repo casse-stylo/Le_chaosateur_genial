@@ -17,7 +17,7 @@ def Poincare_version2(E, y, v, h, error, N, Pot, Method=RK4) :
 
     for yi in range(size_y):
         for vi in range(size_v) :
-            print(y[yi]," ", v[vi], "\n")
+            #print(y[yi]," ", v[vi], "\n")
             if (2*(E-Pot(x,y[yi]))-v[vi]**2 < 0) :
                 continue
             else :
