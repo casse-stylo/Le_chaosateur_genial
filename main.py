@@ -111,7 +111,7 @@ if __name__ == "__main__" :
 
     wn = np.array([0,0.1,0,0.097])
     N = 100000
-    h = 1e-2
+    h = 1e-3
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
@@ -123,16 +123,18 @@ if __name__ == "__main__" :
 
     #Plot_Trajectoires(wn, N, h, pot)
     #Poincarre_version1(wn, N, h, pot)
-    #Poincare_version2(E, y, v, h, error, N, pot)
-    for n in np.arange(1,5,1) : 
-        wn = np.array([0,1,1,0])
-        N = int(10 * 10**n)
-        h = 10.**-n
-        pot = Kepler
+    Poincare_version2(E, y, v, h, error, N, pot)
 
-        #Plot_Trajectoires(wn, N, h, pot)
-        #Poincarre (wn, N, h, pot)
+    if(0) :
+        for n in np.arange(1,5,1) : 
+            wn = np.array([0,1,1,0])
+            N = int(10 * 10**n)
+            h = 10.**-n
+            pot = Kepler
 
-        Energie(wn, N, h, pot)
+            #Plot_Trajectoires(wn, N, h, pot)
+            #Poincarre (wn, N, h, pot)
+
+            Energie(wn, N, h, pot)
 
     
