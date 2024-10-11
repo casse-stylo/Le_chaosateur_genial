@@ -15,6 +15,7 @@ from Potentiel import*
 from RK2 import*
 from Euler import*
 from RK4 import*
+from Poincare import*
 
 def Orbite(wn, N, h, Methode, pot) :
     
@@ -61,7 +62,7 @@ def Plot_Trajectoires(wn, N, h, pot) :
 
     plt.show()
 
-def Poincarre(wn, N, h, pot):
+def Poincarre_version1(wn, N, h, pot):
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
 
     plt.plot(Trajectoire_RK4[1], Trajectoire_RK4[3])
@@ -79,11 +80,19 @@ if __name__ == "__main__" :
 
     wn = np.array([0,0.1,0,0.097])
     N = 100000
-    h = 1e-3
+    h = 1e-2
     pot = Henon_Heiles
 
+    # paramètres supplémentaires pour la section de Poincaré
+    error = 1e-3
+    E = 1/12
+    y= np.arange(-0.4, 0.4, 0.05)           
+    v= np.arange(-0.4, 0.4, 0.05)             
+    
+
     #Plot_Trajectoires(wn, N, h, pot)
-    Poincarre (wn, N, h, pot)
+    #Poincarre_version1(wn, N, h, pot)
+    #Poincare_version2(E, y, v, h, error, N, pot)
 
 
     
