@@ -9,25 +9,24 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from Potentiel import*
 
 from RK2 import*
 from Euler import*
 from RK4 import*
+
+from Potentiel import*
 from Poincare import*
 from Energie import*
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
-
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
 
 def Plot_Trajectoires(wn, N, h, pot) :
+    """plots the trajectories of a point inside a gravitational potential, computed using Euler, RK2, RK4 methods
+    :param wn: vector containing x,y position and u,v velocities
+    :param N: number of iterations
+    :param h: time step
+    :param pot: gravitational potential we consider
+    :return: none
+    """
 
     Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
@@ -84,13 +83,19 @@ if __name__ == "__main__" :
       
     
     #Plot_Trajectoires(wn, N, h, pot)
+
     #Poincare_version2(E, y, v, h, error, N, pot)
     
-
-    # calcul du pas de temps optimal pour la conservation de l'énergie :
-    Plot_Energie(wn, pot)
+    #Plot_Energie(wn, pot)
     
-    """energies_rk2 = []
+   
+
+    # -----------------------------------------------------------
+    # -----------------------------------------------------------
+    # anciens codes :
+
+    """
+    energies_rk2 = []
     energies_rk4 = []
     energies_euler = []
 
@@ -117,10 +122,6 @@ if __name__ == "__main__" :
 
     plt.legend()
     plt.show()"""
-
-
-    # -----------------------------------------------------------
-    # anciens codes :
     
     """energies_rk2 = []
     energies_rk4 = []

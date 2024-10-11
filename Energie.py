@@ -6,17 +6,16 @@ from RK2 import*
 from Euler import*
 from RK4 import*
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
-
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
 
 def Energie(wn, N, h, pot, plot = False):
+    """computes the total energy along the trajectory for each method
+    :param wn: vector containing x,y position and u,v velocities
+    :param N: number of iterations
+    :param h: time step
+    :param pot: gravitational potential we consider 
+    :param plot: if True, gives a plot of the energy deviation depending on time for each method
+    :return: array of maximum energy deviation for each method
+    """
 
     plt.clf()
 
@@ -51,29 +50,14 @@ def Energie(wn, N, h, pot, plot = False):
                    np.max(np.log(np.abs((Energie_RK4 - Energie_RK4[0])/Energie_RK4[0])))]
 
 
-# autre fonction qui ne fonctionne pas : 
-def Energie_std(wn, pot, Methode) :
-    exposant = np.arange(1,6,1)
-    dt= 10.**-exposant
-
-    size= np.size(exposant)
-    E_std= np.zeros(size)
-    
-
-    for n in exposant-1 : 
-        h = 10.**-n
-        N = int(10 * 10**n)
-        E= np.zeros(N)
-        for i in range(N) : 
-            E[i]= 0.5*(wn[2]**2 + wn[3]**2) + pot(wn[0], wn[1])
-            wn = Methode(wn, f, h, pot)
-            
-        E_std[n]= np.std(E)
-
-    return np.log10(dt), np.log10(E_std/E[0])
-
 
 def Plot_Energie(wn, pot) :
+    """plots the maximum energy deviation for each method depending on the time step chosen
+    :param wn: vector containing x,y position and u,v velocities
+    :param pot: gravitational potential we consider
+    :return: none
+    """
+
     energies_rk2 = []
     energies_rk4 = []
     energies_euler = []
