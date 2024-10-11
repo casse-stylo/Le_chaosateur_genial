@@ -5,7 +5,7 @@ from math import*
 
 
 def Kepler(x, y):
-    return -1/sqrt(x**2 + y**2)
+    return -1/np.sqrt(x**2 + y**2)
 def Henon_Heiles (x,y):
     return 0.5*(x**2 + y**2+2*x**2*y-2/3*y**3)
 

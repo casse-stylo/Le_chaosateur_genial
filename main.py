@@ -73,17 +73,50 @@ def Poincarre(wn, N, h, pot):
     plt.show()
 
 
+def Energie(wn, N, h, pot):
+
+    plt.clf()
+
+    plt.figure(figsize=(12,8))
+
+    Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
+    Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
+    Trajectoire_Euler = Orbite(wn, N, h, Euler,pot)
+
+    Energie_RK2 = (Trajectoire_RK2[2]**2 + Trajectoire_RK2[3]**2)/2 + pot(Trajectoire_RK2[0],Trajectoire_RK2[1])
+    Energie_RK4 = (Trajectoire_RK4[2]**2 + Trajectoire_RK4[3]**2)/2 + pot(Trajectoire_RK4[0],Trajectoire_RK4[1])
+    Energie_Euler = (Trajectoire_Euler[2]**2 + Trajectoire_Euler[3]**2)/2 + pot(Trajectoire_Euler[0],Trajectoire_Euler[1])
+
+    
+    T = np.arange(0,N*h,h)
+
+    plt.plot(T,np.log(np.abs((Energie_Euler - Energie_Euler[0])/Energie_Euler[0])),label="Euler")
+    plt.plot(T, np.log(np.abs((Energie_RK2 - Energie_RK2[0])/Energie_RK2[0])), label="RK2")
+    plt.plot(T, np.log(np.abs((Energie_RK4 - Energie_RK4[0])/Energie_RK4[0])),label="RK4")
+
+    plt.title(r"$\Delta t = $"+str(h)+" s")
+
+    axes = plt.gca()
+    axes.set_xlabel("t [s]")
+    axes.set_ylabel(r"$\ln \left( \Delta E / E_0 \right)$")
+
+    plt.legend()
+
+    plt.savefig(str(h)+".png")
+
 
 if __name__ == "__main__" :
 
 
-    wn = np.array([0,0.1,0,0.097])
-    N = 100000
-    h = 1e-3
-    pot = Henon_Heiles
+    for n in np.arange(1,5,1) : 
+        wn = np.array([0,1,1,0])
+        N = int(10 * 10**n)
+        h = 10.**-n
+        pot = Kepler
 
-    #Plot_Trajectoires(wn, N, h, pot)
-    Poincarre (wn, N, h, pot)
+        #Plot_Trajectoires(wn, N, h, pot)
+        #Poincarre (wn, N, h, pot)
 
+        Energie(wn, N, h, pot)
 
     
