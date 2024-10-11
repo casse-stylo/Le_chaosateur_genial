@@ -128,6 +128,34 @@ if __name__ == "__main__" :
     energies_euler = []
 
     dt = np.arange(1,5,1)
+    
+    for n in np.arange(1,5,1) : 
+            Nn = int(10 * 10**n)
+            hn = 10.**-n
+            Energie(wn, Nn, hn, pot)
+            energies_euler.append(Energie(wn, Nn, hn, pot)[0])
+            energies_rk2.append(Energie(wn, Nn, hn, pot)[1])
+            energies_rk4.append(Energie(wn, Nn, hn, pot)[2])
+
+    plt.figure()
+
+    plt.plot(dt, energies_euler,label="Euler")
+    plt.plot(dt, energies_rk2,label="RK2")
+    plt.plot(dt, energies_rk4,label="RK4")
+
+    axes = plt.gca()
+
+    axes.set_xlabel(r"$\ln \Delta t [s]$")
+    axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
+
+    plt.legend()
+    plt.show()"""
+    
+    """energies_rk2 = []
+    energies_rk4 = []
+    energies_euler = []
+
+    dt = np.arange(1,5,0.5)
 
     for n in dt : 
         wn = np.array([0,1,1,0])
@@ -150,11 +178,13 @@ if __name__ == "__main__" :
         energies_rk2.append(Energie(wn, N, h, pot)[1])
         energies_rk4.append(Energie(wn, N, h, pot)[2])
 
-    plt.plot(dt, energies_euler,label="Euler")
-    plt.plot(dt, energies_rk2,label="RK2")
-    plt.plot(dt, energies_rk4,label="RK4")
+    plt.plot(np.log10(10**-dt), energies_euler,label="Euler")
+    plt.plot(np.log10(10**-dt), energies_rk2,label="RK2")
+    plt.plot(np.log10(10**-dt), energies_rk4,label="RK4")
 
     axes = plt.gca()
+
+    axes.invert_xaxis()
 
     axes.set_xlabel(r"$\ln \Delta t [s]$")
     axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
