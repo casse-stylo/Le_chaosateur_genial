@@ -78,7 +78,6 @@ def Energie(wn, N, h, pot, plot = False):
 
     plt.clf()
 
-    plt.figure(figsize=(12,8))
 
     Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
@@ -89,6 +88,8 @@ def Energie(wn, N, h, pot, plot = False):
     Energie_Euler = (Trajectoire_Euler[2]**2 + Trajectoire_Euler[3]**2)/2 + pot(Trajectoire_Euler[0],Trajectoire_Euler[1])
 
     if plot :
+        plt.figure(figsize=(12,8))
+
         T = np.arange(0,N*h,h)
 
         plt.plot(T,np.log(np.abs((Energie_Euler - Energie_Euler[0])/Energie_Euler[0])),label="Euler")
@@ -112,26 +113,26 @@ def Energie(wn, N, h, pot, plot = False):
 
 if __name__ == "__main__" :
 
-    """wn = np.array([0,1,1,0])
-    N = int(10 * 10**3)
-    h = 10.**-3
+    wn = np.array([0,1,1,0])
+    N = int(100 * 10**3)
+    h = 10.**-1
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
     error = 1e-3
-    E = 1/12
-    y= np.arange(-0.4, 0.4, 0.05)           
-    v= np.arange(-0.4, 0.4, 0.05)    """         
+    E = 1/10
+    y= np.arange(-0.4, 0.4, 0.2)           
+    v= np.arange(-0.4, 0.4, 0.2)            
     
 
     #Poincarre_version1(wn, N, h, pot)
-    #Poincare_version2(E, y, v, h, error, N, pot)
+    Poincare_version2(E, y, v, h, error, N, pot)
     
-    energies_rk2 = []
+    """energies_rk2 = []
     energies_rk4 = []
     energies_euler = []
 
-    dt = np.arange(1,5,1)
+    dt = np.arange(1,5,0.5)
 
     for n in dt : 
         wn = np.array([0,1,1,0])
@@ -146,16 +147,18 @@ if __name__ == "__main__" :
         energies_rk2.append(Energie(wn, N, h, pot)[1])
         energies_rk4.append(Energie(wn, N, h, pot)[2])
 
-    plt.plot(dt, energies_euler,label="Euler")
-    plt.plot(dt, energies_rk2,label="RK2")
-    plt.plot(dt, energies_rk4,label="RK4")
+    plt.plot(np.log10(10**-dt), energies_euler,label="Euler")
+    plt.plot(np.log10(10**-dt), energies_rk2,label="RK2")
+    plt.plot(np.log10(10**-dt), energies_rk4,label="RK4")
 
     axes = plt.gca()
+
+    axes.invert_xaxis()
 
     axes.set_xlabel(r"$\ln \Delta t [s]$")
     axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
 
     plt.legend()
-    plt.show()
+    plt.show()"""
         
     
