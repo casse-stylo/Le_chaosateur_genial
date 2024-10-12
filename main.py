@@ -114,19 +114,20 @@ def Energie(wn, N, h, pot, plot = False):
 if __name__ == "__main__" :
 
     wn = np.array([0,1,1,0])
-    N = int(100 * 10**3)
-    h = 10.**-1
+
+    n = 1
+
+    N = int(10000 * 10**n)
+    h = 10.**-n
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
-    error = 1e-3
-    E = 1/10
-    y= np.arange(-0.4, 0.4, 0.2)           
-    v= np.arange(-0.4, 0.4, 0.2)            
+    E = 1/12
+        
     
 
     #Poincarre_version1(wn, N, h, pot)
-    Poincare_version2(E, y, v, h, error, N, pot)
+    Poincare_version2(E, h, N, pot, ntraj=10)
     
     """energies_rk2 = []
     energies_rk4 = []
