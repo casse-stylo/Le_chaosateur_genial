@@ -16,6 +16,7 @@ from RK2 import*
 from Euler import*
 from RK4 import*
 from Poincare import*
+from ChaosMeasure import *
 
 def Orbite(wn, N, h, Methode, pot) :
     
@@ -125,9 +126,8 @@ if __name__ == "__main__" :
     E = 1/12
         
     
-
     #Poincarre_version1(wn, N, h, pot)
-    Poincare_version2(E, h, N, pot, ntraj=10)
+    #Poincare_version2(E, h, N, pot, ntraj=10)
     
     """energies_rk2 = []
     energies_rk4 = []
@@ -161,5 +161,9 @@ if __name__ == "__main__" :
 
     plt.legend()
     plt.show()"""
+
+
+    # calcul de la chaosité en fonction de l'énergie
+    Chaos_HenonHeiles(1e-1, 10000, ntraj=300)
         
     
