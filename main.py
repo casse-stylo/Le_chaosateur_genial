@@ -17,8 +17,6 @@ from Euler import*
 from RK4 import*
 from Poincare import*
 from ChaosMeasure import *
-from poincare_vectorise import*
-import time
 
 def Orbite(wn, N, h, Methode, pot) :
     
@@ -120,7 +118,7 @@ if __name__ == "__main__" :
 
     n = 1
 
-    N = int(5000 * 10**n)
+    N = int(10000 * 10**n)
     h = 10.**-n
     pot = Henon_Heiles
 
@@ -128,9 +126,8 @@ if __name__ == "__main__" :
     E = 1/12
         
     
-
     #Poincarre_version1(wn, N, h, pot)
-    Poincare_version2(E, h, N, pot, ntraj=10)
+    #Poincare_version2(E, h, N, pot, ntraj=10)
     
     """energies_rk2 = []
     energies_rk4 = []
