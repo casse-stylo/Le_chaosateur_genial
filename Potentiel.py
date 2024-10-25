@@ -76,4 +76,3 @@ def Orbite(wn, N, h, Methode, pot) :
 
     return Trajectoire
 
-

@@ -45,9 +45,9 @@ def Poincare_version2(E, h, N, Pot, Method=RK4, ntraj = 10) :
             wn = Method(wn, f, h, Pot)
             
         
-        plt.scatter(y_list, v_list, s=0.5, color="red")
+        #plt.scatter(y_list, v_list, s=0.5, color="red")
 
-    plt.show()
+    #plt.show()
 
     return 
 
