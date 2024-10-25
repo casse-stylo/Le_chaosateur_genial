@@ -16,6 +16,7 @@ from RK2 import*
 from Euler import*
 from RK4 import*
 from Poincare import*
+from ChaosMeasure import *
 from poincare_vectorise import*
 import time
 
@@ -124,39 +125,12 @@ if __name__ == "__main__" :
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
-    E = 1/10
+    E = 1/12
         
     
 
-    yi = random.uniform(-0.4, 0.4)
-    vi = random.uniform(-0.4, 0.4)
-
     #Poincarre_version1(wn, N, h, pot)
-    #Poincarre_test(E, h, N, pot, ntraj=10)
-    
-    yi = []
-    vi = []
-
-    start = time.time()
-    liste_poincarres = []
-
-    for i in range(1000):
-
-        liste_poincarres.append(Poincarre_test(E,h,N,pot))
-
-    Poincarre_solver(liste_poincarres,E,h,N,pot)
-
-    print(time.time()-start)
-
-    #start = time.time()
-    
-    #Poincare_version2(E,h,N,pot,ntraj=100)
-    #print(time.time()-start)
-
-    #plt.show()
-
-    #plt.scatter(liste[0],liste[1],s=0.5,color="red")
-    #plt.show()
+    Poincare_version2(E, h, N, pot, ntraj=10)
     
     """energies_rk2 = []
     energies_rk4 = []
@@ -190,5 +164,9 @@ if __name__ == "__main__" :
 
     plt.legend()
     plt.show()"""
+
+
+    # calcul de la chaosité en fonction de l'énergie
+    Chaos_HenonHeiles(1e-1, 10000, ntraj=300)
         
     
