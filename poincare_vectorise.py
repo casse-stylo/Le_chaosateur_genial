@@ -12,7 +12,7 @@ import random
     
 
 class Poincarre_solver():
-    def __init__(self, liste_poincarres, E, h, N, Pot, Method=RK4):
+    def __init__(self, liste_poincarres, E, h, N, Pot, plot = False, deux= False, Method=RK4):
 
         self.E = E
         self.h = h
@@ -22,22 +22,34 @@ class Poincarre_solver():
         self.yi = []
         self.vi = []
 
+        self.yi2 = []
+        self.vi2 = []
+
+
         for p in liste_poincarres :
             self.yi.append(p.yi)
             self.vi.append(p.vi)
+
+            self.yi2.append(p.yi2)
+            self.vi2.append(p.vi2)
 
         self.liste_poincarre = np.array(liste_poincarres)
 
         self.yi = np.array(self.yi)
         self.vi = np.array(self.vi)
 
+        self.yi2 = np.array(self.yi2)
+        self.vi2 = np.array(self.vi2)
+
+
         self.ntraj = len(self.yi)
 
 
         u= np.sqrt(2*(self.E-self.Pot(0,self.yi))-self.vi**2)        # initial x velocity
+        u2 = np.sqrt(2*(self.E-self.Pot(0,self.yi2))-self.vi2**2)
 
         wn= np.array([[np.zeros(self.ntraj),self.yi,u,self.vi],[np.zeros(self.ntraj),self.yi,u,self.vi]])
-
+        wn2 = np.array([[np.zeros(self.ntraj),self.yi2,u2,self.vi2],[np.zeros(self.ntraj),self.yi2,u2,self.vi2]])
 
         """
         Structure de wn
@@ -46,7 +58,7 @@ class Poincarre_solver():
         troisième indice = 0, ..., ntraj : particule considérée
         """
 
-        for i in range(self.N) : 
+        for _ in range(self.N) : 
 
             wn[0,:,:] = wn[1,:,:]
             wn[1,:,:] = self.RK4(wn, self.f, self.h, self.Pot)
@@ -58,24 +70,79 @@ class Poincarre_solver():
             y0 = wn_signe[0,1,:] - wn_signe[0,0,:] * (wn_signe[1,1,:] - wn_signe[0,1,:]) / (wn_signe[1,0,:] - wn_signe[0,0,:])
             v0 = wn_signe[0,3,:] - wn_signe[0,0,:] * (wn_signe[1,3,:] - wn_signe[0,3,:]) / (wn_signe[1,0,:] - wn_signe[0,0,:])
 
+            indices = np.where(signes)
+
             if np.shape(y0) !=(0,):
 
                 for s in range(len(y0)):
 
-                    liste_poincarres[signes[s]].ylist.append(y0[s])
-                    liste_poincarres[signes[s]].vlist.append(v0[s])
+                    liste_poincarres[indices[0][s]].ylist.append(y0[s])
+                    liste_poincarres[indices[0][s]].vlist.append(v0[s])
 
-        for p in liste_poincarres :
-            p.plot()
+            if deux :
 
-            """           
-            y0 = wnmoins1[1] - wnmoins1[0] * (wn[1] - wnmoins1[1]) / (wn[0] - wnmoins1[0])
-            v0 = wnmoins1[3] - wnmoins1[0] * (wn[3] - wnmoins1[3]) / (wn[0] - wnmoins1[0])
-            """
+                wn2[0,:,:] = wn2[1,:,:]
+                wn2[1,:,:] = self.RK4(wn2, self.f, self.h, self.Pot)
 
-            #plt.scatter(y0,v0)
+                signes2 = np.sign(wn2[1,0,:]) - np.sign(wn2[0,0,:]) !=0 
+
+                wn_signe2 = wn2[:,:,signes2]
+
+                y02 = wn_signe2[0,1,:] - wn_signe2[0,0,:] * (wn_signe2[1,1,:] - wn_signe2[0,1,:]) / (wn_signe2[1,0,:] - wn_signe2[0,0,:])
+                v02 = wn_signe2[0,3,:] - wn_signe2[0,0,:] * (wn_signe2[1,3,:] - wn_signe2[0,3,:]) / (wn_signe2[1,0,:] - wn_signe2[0,0,:])
+
+                indices2 = np.where(signes2)
+
+                if np.shape(y02) !=(0,):
+
+                    for s in range(len(y02)):
+                        #print(liste_poincarres[signes2[s]])
+
+                        liste_poincarres[indices2[0][s]].ylist2.append(y02[s])
+                        liste_poincarres[indices2[0][s]].vlist2.append(v02[s])
+
+        self.liste_poincarre = liste_poincarres
+
+        if plot :
+            self.plot(deux = deux)
+
+
+    def plot (self, deux = False):
+
+        for p in self.liste_poincarre :
+            p.plot(deux)
 
         plt.show()
+
+    def Chaos_measure(self, muc= 1e-6) : 
+
+        nb_curve = 0
+        mus = []
+        std = []
+
+        for p in self.liste_poincarre :
+            # we need to count the number of points in the Poincare section for each trajectory
+
+    
+            # we compute the mu value 
+
+            index = min([25, len(p.ylist), len(p.ylist2)])
+
+            mu = np.sum((np.array(p.ylist[:index])-np.array(p.ylist2[:index]))**2 + (np.array(p.vlist[:index]) - np.array(p.vlist2[:index]))**2)
+            mus.append(mu)
+            #print((np.array(p.ylist[:25])-np.array(p.ylist2[:25]))**2 + (np.array(p.vlist[:25]) - np.array(p.vlist2[:25]))**2)
+            #print(mu)
+
+            # we check if the trajectory is a curve or ergodic according to mu value
+
+            if mu<muc : 
+                nb_curve= nb_curve + 1
+        
+        # we compute the relative area occupied by the curves 
+        
+
+        return nb_curve/len(self.liste_poincarre), np.mean(mus), np.std(mus)
+
 
     def RK4 (self,wn, f, h, pot):
         """apply RK4 method to a 4D phase space vector
@@ -140,6 +207,9 @@ class Poincarre_test ():
         self.ylist = []
         self.vlist = []
 
+        self.ylist2 = []
+        self.vlist2 = []
+
         self.CI()
 
         #self.poincarre()
@@ -151,13 +221,19 @@ class Poincarre_test ():
 
         self.yi = random.uniform(-0.4, 0.4)
         self.vi = random.uniform(-0.4, 0.4)
+
+        self.yi2= self.yi + np.sqrt(1e-7)
+        self.vi2= self.vi - np.sqrt(1e-7)
+
         
         if 2*(self.E-self.Pot(0,self.yi))-self.vi**2 < 0 : self.CI()
-
+        if 2*(self.E-self.Pot(0,self.yi2))-self.vi2**2 < 0 : self.CI()
 
     
-    def plot(self) :
+    def plot(self, deux = False) :
 
         self.list=np.array([self.ylist, self.vlist])
+        self.list2=np.array([self.ylist2, self.vlist2])
+
         plt.scatter(self.list[0],self.list[1],s=0.5,color="red")
-   
+        if deux : plt.scatter(self.list2[0],self.list2[1],s=0.5,color="blue")

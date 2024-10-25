@@ -18,6 +18,9 @@ from RK4 import*
 from Poincare import*
 from ChaosMeasure import *
 
+import time
+from poincare_vectorise import*
+
 def Orbite(wn, N, h, Methode, pot) :
     
     Trajectoire = np.zeros((4,N))
@@ -118,8 +121,8 @@ if __name__ == "__main__" :
 
     n = 1
 
-    N = int(10000 * 10**n)
-    h = 10.**-n
+    N = int(100 * 10**n)
+    h = 0.5*10.**-n
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
@@ -128,6 +131,49 @@ if __name__ == "__main__" :
     
     #Poincarre_version1(wn, N, h, pot)
     #Poincare_version2(E, h, N, pot, ntraj=10)
+    
+
+    yi = random.uniform(-0.4, 0.4)
+    vi = random.uniform(-0.4, 0.4)
+
+    #Poincarre_version1(wn, N, h, pot)
+    #Poincarre_test(E, h, N, pot, ntraj=10)
+    
+    yi = []
+    vi = []
+
+    liste_E = np.arange(0.02,0.18,0.005)
+    Resultat_chaos = np.zeros(len(liste_E))
+
+    for i in range(len(liste_E)) :
+
+        print(E)
+        
+        E = liste_E[i]
+        liste_poincarres = []
+
+        for j in range(1000):
+
+            liste_poincarres.append(Poincarre_test(E,h,N,pot))
+
+        solver = Poincarre_solver(liste_poincarres,E,h,N,pot,deux=True, plot=False)
+        Resultat_chaos[i] = solver.Chaos_measure(muc=5e-2)[0]
+
+    axes = plt.gca()
+    axes.set_xlabel("E [J]")
+    axes.set_ylabel("Surface relative")
+
+    plt.scatter(liste_E, Resultat_chaos)
+    plt.show()
+
+
+    # calcul de la chaosité en fonction de l'énergie
+    #Chaos_HenonHeiles(liste_poincarres, h, N, ntraj=300)
+        
+    
+
+
+
     
     """energies_rk2 = []
     energies_rk4 = []
@@ -161,9 +207,3 @@ if __name__ == "__main__" :
 
     plt.legend()
     plt.show()"""
-
-
-    # calcul de la chaosité en fonction de l'énergie
-    Chaos_HenonHeiles(1e-1, 10000, ntraj=300)
-        
-    
