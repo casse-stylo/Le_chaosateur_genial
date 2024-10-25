@@ -6,7 +6,7 @@ from RK4 import *
 import random
 
 
-def Chaos_HenonHeiles(h, N, Pot=Henon_Heiles, muc= 1e-4, Method=RK4, ntraj = 300) : 
+def Chaos_HenonHeiles(h, liste_poincarres,  N, Pot=Henon_Heiles, muc= 1e-4, Method=RK4, ntraj = 300) : 
 
     # energy values for which we will compute the trajectory
     E_values= np.linspace(0.01, 0.17, 15)
