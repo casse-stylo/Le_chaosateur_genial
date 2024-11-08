@@ -118,5 +118,99 @@ def Chaos_HenonHeiles(h, liste_poincarres,  N, Pot=Henon_Heiles, muc= 1e-4, Meth
     return
 
 
+# ---------------------------------------------------------------------
+
+
+def Orbite(wn, N, h, Methode, pot) :
+    
+    Trajectoire = np.zeros((4,N))
+
+    for i in range(N) : 
+        Trajectoire[:,i] = wn
+        wn = Methode(wn, f, h,pot)
+
+    return Trajectoire
+
+def Trapz(x,f) :
+    h= x[1]-x[0]
+    res=h*(0.5*f[0]+0.5*f[-1]+np.sum(f[1:-1]))
+    return res
+
+
+def Gottwald_Melbourne_v1(wn, N, h) :
+    Trajectoire = Orbite(wn, N, h, RK4, Henon_Heiles)
+    x = Trajectoire[0,:]
+    c= 1.7
+
+    t= N*h
+    T= 10*t
+
+    tau= np.linspace(0, T, len(x))
+    
+    p= np.zeros(len(x))
+    pt= np.zeros(len(x))
+    
+
+    for j in range(len(x)) :
+        theta= np.zeros(len(x))
+        s= np.linspace(0, tau[j], len(x))
+        s_t= np.linspace(0, tau[j]+t, len(x))
+
+        for i in range(len(x)) :
+            s_prime= np.linspace(0, s[i], len(x))
+            theta[i]= c*s[i] + Trapz(s_prime, x)
+    
+        p[j]= Trapz(s, x*np.cos(theta))
+        pt[j]= Trapz(s_t, x*np.cos(theta))
+
+    M= Trapz(tau, (pt-p)**2)/T
+    K= np.log(M+1)/np.log(t)
+
+    return K
+
+
+def Gottwald_Melbourne_v2(wn, N, h) :
+    Trajectoire = np.zeros((4,N))
+    p= np.zeros(N)
+    pt= np.zeros(N)
+    theta= np.zeros(N)
+    t= np.linspace(0, N*h, N)
+    c= 1.7
+
+    Trajectoire[:,0]= wn
+    wn = RK4(wn, f, h, Henon_Heiles)
+
+    for ntau in range(1,N) : 
+
+        Trajectoire[:,ntau] = wn
+        wn = RK4(wn, f, h, Henon_Heiles)
+
+        x= Trajectoire[0, 0:ntau+1]
+        tau= t[0:ntau+1]
+        s= ntau*h
+
+        theta[ntau]= c*s + Trapz(tau, x)
+        #print(Trapz(tau, x))
+        p[ntau] = Trapz(tau, x*np.cos(theta[0:ntau+1]))
+        pt[ntau] = Trapz(tau+N*h, x*np.cos(theta[0:ntau+1]))
+
+
+    T= np.arange(0, 10000, 0.1)
+    M= Trapz(T, (pt-p)**2)/10000
+    K= np.log(M+1)/np.log(N*h)
+
+    return K
+
+
+
+
+wn = np.array([0,1,1,0])
+N = 1000
+h = 10.**-1
+
+K= Gottwald_Melbourne_v2(wn, N, h)
+print(K)
+
+
 
 
