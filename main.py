@@ -142,8 +142,10 @@ if __name__ == "__main__" :
     yi = []
     vi = []
 
-    liste_E = np.arange(0.02,0.18,0.005)
+    liste_E = np.arange(0.02,0.165,0.005)
     Resultat_chaos = np.zeros(len(liste_E))
+    mu_moyen = np.zeros(len(liste_E))
+    mu_std = np.zeros(len(liste_E))
 
     for i in range(len(liste_E)) :
 
@@ -157,13 +159,23 @@ if __name__ == "__main__" :
             liste_poincarres.append(Poincarre_test(E,h,N,pot))
 
         solver = Poincarre_solver(liste_poincarres,E,h,N,pot,deux=True, plot=False)
-        Resultat_chaos[i] = solver.Chaos_measure(muc=5e-2)[0]
+        mesure = solver.Chaos_measure(muc=5e-2)
+        Resultat_chaos[i] = mesure[0]
+        mu_moyen[i] = mesure[1]
+        mu_std = mesure[2]
+        print(mesure[1], mesure[2])
 
     axes = plt.gca()
     axes.set_xlabel("E [J]")
     axes.set_ylabel("Surface relative")
 
     plt.scatter(liste_E, Resultat_chaos)
+    plt.show()
+
+    print(mu_moyen,mu_std)
+
+    plt.errorbar(liste_E,mu_moyen,yerr=mu_std)
+    plt.axhline(5e-2,ls="--")
     plt.show()
 
 

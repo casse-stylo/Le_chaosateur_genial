@@ -140,6 +140,11 @@ class Poincarre_solver():
         
         # we compute the relative area occupied by the curves 
         
+        """plt.scatter(np.arange(len(mus)),mus)
+        plt.axhline(np.mean(mus))
+        plt.axhline(np.mean(mus)-np.std(mus))
+        plt.axhline(np.mean(mus)+np.std(mus))
+        plt.show()"""
 
         return nb_curve/len(self.liste_poincarre), np.mean(mus), np.std(mus)
 
