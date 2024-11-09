@@ -65,6 +65,7 @@ def Plot_Trajectoires(wn, N, h, pot) :
     PXPY.legend()
 
     plt.show()
+    
 
 def Poincarre_version1(wn, N, h, pot):
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
