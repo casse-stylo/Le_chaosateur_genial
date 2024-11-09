@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
 from Potentiel import *
 from RK4 import *
@@ -133,32 +134,13 @@ def Orbite(wn, N, h, Methode, pot) :
 
     return Trajectoire
 
-def Trapz(x,f) :
-    h= x[1]-x[0]
-    res=h*(0.5*f[0]+0.5*f[-1]+np.sum(f[1:-1]))
-    return res
-
-def Simps(x,y):
-    h=x[1]-x[0]
-
-    oddsum=np.sum(y[1:][::2])
-    evensum=np.sum(y[0:][::2])-y[0]-y[-1]
-
-    res=h/3.0*(y[0]+y[-1]+4*oddsum+2*evensum)
-
-    return res
 
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
+def Lin_Regression(X,Y) :
+    linear_regressor = LinearRegression(fit_intercept=True)
+    result = linear_regressor.fit(X, Y)
 
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
-
+    return result.coef_[0], result.intercept_
 
 
 def Gottwald_Melbourne_v1(wn, N, h) :
@@ -168,7 +150,7 @@ def Gottwald_Melbourne_v1(wn, N, h) :
     #p_mt= np.zeros(N)
     theta= np.zeros(N)
 
-    #t= np.linspace(0, N*h, N)
+    t= np.linspace(0, N*h, N)
     c= 1.7
 
     Trajectoire[:,0]= wn
@@ -188,7 +170,7 @@ def Gottwald_Melbourne_v1(wn, N, h) :
         #p_mt[ntau] = p[ntau-1]
         M[ntau]= (p[ntau]-p[0])**2
 
-    Mmean= np.mean(M)
+    Mmean= sum(M)/(N*h)
     K= np.log(Mmean+1)/np.log(N*h)
 
     return K
@@ -198,9 +180,10 @@ def Gottwald_Melbourne_v1(wn, N, h) :
 def Gottwald_Melbourne_v2(wn, N, h) :
     Trajectoire = np.zeros((4,N))
     p= np.zeros(N)
-    p_mt= np.zeros(N)
+    #p_mt= np.zeros(N)
     theta= np.zeros(N)
     M= np.zeros(N)
+    tau= np.zeros(N)
     K= np.zeros(N)
 
     #t= np.linspace(0, N*h, N)
@@ -213,21 +196,30 @@ def Gottwald_Melbourne_v2(wn, N, h) :
 
         Trajectoire[:,ntau] = wn
         wn = RK4(wn, f, h, Henon_Heiles)
-        #print(wn)
+        print(wn)
 
         x= Trajectoire[0, 0:ntau+1]
         s= ntau*h
 
         theta[ntau]= c*s + h*sum(x)
         p[ntau] = h*sum(x*np.cos(theta[0:ntau+1]))
-        p_mt[ntau] = p[ntau-1]
-        M[ntau]= h*sum((p[0:ntau+1]-p_mt[0:ntau+1])**2)/s
-        K[ntau]= np.log(M[ntau]+1)/np.log(s+1e-5)  # we add 1e-5 to s, otherwize for the step ntau=1/h we have an inf value
+        #p_mt[ntau] = p[ntau-1]
+
+    for ntau in range(1,N) : 
+        for nt in range(0,N-ntau) :
+            M[ntau]= M[ntau] + (p[nt+ntau]-p[nt])**2
+        M[ntau]= M[ntau]/(h*(N-ntau))    
+        tau[ntau]= ntau*h
+        #print(M[ntau])
     
+    tau= tau.reshape(-1,1)
+    K, b= Lin_Regression(np.log(tau+1e-7), np.log(M+1))
 
-    Kmean= np.mean(K)
+    """plt.figure()
+    plt.scatter(np.log(tau), np.log(M+1))
+    plt.show()"""
 
-    return Kmean
+    return K
 
 def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     # energy values for which we will compute the trajectory
@@ -240,7 +232,7 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     for k in range(len(E_values)) : 
         E= E_values[k]
         nb_curve = 0
-        e= 0.03
+        e= 0.5
 
         for n in range(ntraj) :
             b = 0
@@ -258,7 +250,7 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
             K= Gottwald_Melbourne_v2(wn, N, h)
             if K<e :
                 nb_curve= nb_curve + 1
-                print(nb_curve)
+                #print(nb_curve)
 
 
         # we compute the relative area occupied by the curves 
@@ -281,8 +273,8 @@ wn = np.array([0,0.1,0.157,0.1])
 N = 1000
 h = 10.**-1
 
-#Gottwald_Melbourne_v1(wn, N, h)
-Chaos_Gottwald_Melbourne(N, h)
+Gottwald_Melbourne_v2(wn, N, h)
+#Chaos_Gottwald_Melbourne(N, h, 50)
 
 
 
