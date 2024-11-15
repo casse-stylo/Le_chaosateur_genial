@@ -48,7 +48,6 @@ def Plot_Trajectoires(wn, N, h, pot) :
     PXPY.set_xlabel("Px")
     PXPY.set_ylabel("Py")
 
-    
 
     XY.scatter(Trajectoire_Euler[0],Trajectoire_Euler[1],s=1, label="Euler",color="red")
     PXPY.scatter(Trajectoire_Euler[2],Trajectoire_Euler[3],s=1, label="Euler",color="red")
@@ -121,12 +120,12 @@ if __name__ == "__main__" :
 
     n = 1
 
-    N = int(100 * 10**n)
-    h = 0.5*10.**-n
+    N = int(400 * 10**n)
+    h = 0.25*10.**-n
     pot = Henon_Heiles
 
     # paramètres supplémentaires pour la section de Poincaré
-    E = 1/12
+    E = 1/10
         
     
     #Poincarre_version1(wn, N, h, pot)
@@ -162,8 +161,7 @@ if __name__ == "__main__" :
         mesure = solver.Chaos_measure(muc=5e-2)
         Resultat_chaos[i] = mesure[0]
         mu_moyen[i] = mesure[1]
-        mu_std = mesure[2]
-        print(mesure[1], mesure[2])
+        mu_std[i] = mesure[2]
 
     axes = plt.gca()
     axes.set_xlabel("E [J]")
@@ -174,8 +172,14 @@ if __name__ == "__main__" :
 
     print(mu_moyen,mu_std)
 
+    axes = plt.gca()
+    axes.set_xlabel("E [J]")
+    axes.set_ylabel(r"$\left<\mu\right> \pm \sigma_{\mu}$")
+
     plt.errorbar(liste_E,mu_moyen,yerr=mu_std)
-    plt.axhline(5e-2,ls="--")
+    plt.axhline(5e-2,ls="--",label = r"$\mu_c$")
+
+    plt.legend()
     plt.show()
 
 
