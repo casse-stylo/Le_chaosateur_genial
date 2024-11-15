@@ -152,7 +152,6 @@ class Poincarre_solver():
 
             liste_mus.append(distances)
 
-        plot = True
         if plot :
 
             liste_mus = np.array(liste_mus)

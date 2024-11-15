@@ -8,7 +8,8 @@
 # 
 
 import numpy as np
-import numpy as np
+np.float = float
+
 import matplotlib.pyplot as plt
 from Potentiel import*
 
@@ -82,7 +83,6 @@ def Energie(wn, N, h, pot, plot = False):
 
     plt.clf()
 
-
     Trajectoire_RK2 = Orbite(wn, N, h, RK2,pot)
     Trajectoire_RK4 = Orbite(wn, N, h, RK4,pot)
     Trajectoire_Euler = Orbite(wn, N, h, Euler,pot)
@@ -115,43 +115,71 @@ def Energie(wn, N, h, pot, plot = False):
                    np.max(np.log(np.abs((Energie_RK4 - Energie_RK4[0])/Energie_RK4[0])))]
 
 
-if __name__ == "__main__" :
+def test_solvers ():
 
-    wn = np.array([0,1,1,0])
+    # Teste les différentes méthodes de résolution de l'équation du mouvement en comparant la conservation de l'énergie
 
-    n = 1
+    energies_rk2 = []
+    energies_rk4 = []
+    energies_euler = []
 
-    N = int(400 * 10**n)
-    h = 0.25*10.**-n
-    pot = Henon_Heiles
+    dt = np.arange(1,5,0.5)
 
-    # paramètres supplémentaires pour la section de Poincaré
-    E = 1/10
-        
-    
-    #Poincarre_version1(wn, N, h, pot)
-    #Poincare_version2(E, h, N, pot, ntraj=10)
-    
+    for n in dt : 
+        wn = np.array([0,1,1,0])
+        N = int(10 * 10**n)
+        h = 10.**-n
+        pot = Kepler
 
-    yi = random.uniform(-0.4, 0.4)
-    vi = random.uniform(-0.4, 0.4)
+        energies_euler.append(Energie(wn, N, h, pot)[0])
+        energies_rk2.append(Energie(wn, N, h, pot)[1])
+        energies_rk4.append(Energie(wn, N, h, pot)[2])
 
-    #Poincarre_version1(wn, N, h, pot)
-    #Poincarre_test(E, h, N, pot, ntraj=10)
-    
+    plt.plot(np.log10(10.**-dt), energies_euler,label="Euler")
+    plt.plot(np.log10(10.**-dt), energies_rk2,label="RK2")
+    plt.plot(np.log10(10.**-dt), energies_rk4,label="RK4")
+
+    axes = plt.gca()
+
+    axes.invert_xaxis()
+
+    axes.set_xlabel(r"$\ln \Delta t [s]$")
+    axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
+
+    plt.legend()
+    plt.show()
+
+def test_section_poincarre(E, h, N, pot, ntraj = 50):
+
+    # Trace les sections de poincarre
+
+    liste_poincarres = []
+
+    for _ in range(ntraj):
+
+        liste_poincarres.append(Poincarre_test(E,h,N,pot))
+
+    Poincarre_solver(liste_poincarres,E,h,N,pot,deux=False, plot=True)
+
+def test_chaos_1 (h, N, pot):
+
+    # Test du chaos à partir de la première méthode
+    # Affiche une mesure du chaos en fonction de l'énergie, et la distribution des mus
+
     yi = []
     vi = []
 
-    liste_E = np.arange(0.02,0.165,0.005)
+    liste_E = np.arange(0.02,0.165,0.02)
     Resultat_chaos = np.zeros(len(liste_E))
     mu_moyen = np.zeros(len(liste_E))
     mu_std = np.zeros(len(liste_E))
 
     for i in range(len(liste_E)) :
-
-        print(E)
         
         E = liste_E[i]
+                
+        print("E = "+str(E))
+
         liste_poincarres = []
 
         for j in range(1000):
@@ -171,8 +199,6 @@ if __name__ == "__main__" :
     plt.scatter(liste_E, Resultat_chaos)
     plt.show()
 
-    print(mu_moyen,mu_std)
-
     axes = plt.gca()
     axes.set_xlabel("E [J]")
     axes.set_ylabel(r"$\left<\mu\right> \pm \sigma_{\mu}$")
@@ -183,44 +209,20 @@ if __name__ == "__main__" :
     plt.legend()
     plt.show()
 
+if __name__ == "__main__" :
 
-    # calcul de la chaosité en fonction de l'énergie
-    #Chaos_HenonHeiles(liste_poincarres, h, N, ntraj=300)
-        
+    n = 1
+
+    N = int(100 * 10**n)
+    h = 10.**-n
+    pot = Henon_Heiles
+    wn = np.array([0,0.1,0.157,0.1])
+    E = 1/16
+
+    #test_solvers()
+    #test_section_poincarre(E = 1/16, h = 1e-2.5, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermées
     
-
-
-
     
-    """energies_rk2 = []
-    energies_rk4 = []
-    energies_euler = []
-
-    dt = np.arange(1,5,0.5)
-
-    for n in dt : 
-        wn = np.array([0,1,1,0])
-        N = int(10 * 10**n)
-        h = 10.**-n
-        pot = Kepler
-
-        #Plot_Trajectoires(wn, N, h, pot)
-        #Poincarre (wn, N, h, pot)
-
-        energies_euler.append(Energie(wn, N, h, pot)[0])
-        energies_rk2.append(Energie(wn, N, h, pot)[1])
-        energies_rk4.append(Energie(wn, N, h, pot)[2])
-
-    plt.plot(np.log10(10**-dt), energies_euler,label="Euler")
-    plt.plot(np.log10(10**-dt), energies_rk2,label="RK2")
-    plt.plot(np.log10(10**-dt), energies_rk4,label="RK4")
-
-    axes = plt.gca()
-
-    axes.invert_xaxis()
-
-    axes.set_xlabel(r"$\ln \Delta t [s]$")
-    axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
-
-    plt.legend()
-    plt.show()"""
+    #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
+    
+    Gottwald_Melbourne_v1(wn, N, h)
