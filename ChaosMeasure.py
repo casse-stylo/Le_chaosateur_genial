@@ -49,23 +49,27 @@ def Gottwald_Melbourne_v1(wn, N, h) :
         tau[ntau]= ntau*h
   
 
-    data_theta, base_theta= np.histogram(c*tau + Trajectoire[0,:], bins=h*np.ones(N))
+    """data_theta, base_theta= np.histogram(c*tau + Trajectoire[0,:], bins=tau)
     theta= np.cumsum(data_theta)
-    data_p, base_p= np.histogram(Trajectoire[0,0:N-1]*np.cos(theta), bins=h*np.ones(N-1))
+    data_p, base_p= np.histogram(Trajectoire[0,0:N-1]*np.cos(theta), bins=tau[0:N-1])
     p= np.cumsum(data_p)
-    data_M, base_M= np.histogram((p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-3)-tau[0:N-3]), bins=h*np.ones(N-3))
-    M= np.cumsum(data_M)
+    data_M, base_M= np.histogram((p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-3)-tau[0:N-3]), bins=tau[0:N-2])
+    M= np.cumsum(data_M)"""
+
+    theta= np.cumsum(c*tau + Trajectoire[0,:])
+    p= np.cumsum(Trajectoire[0,:]*np.cos(theta))
+    M= np.cumsum((p[1:len(p)]-p[0:len(p)-1])**2/(N*h))
     
+    tau= tau[0:N-1]
     tau= tau.reshape(-1,1)
-    K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
+    K, b= Lin_Regression(np.log(tau+1e-7), np.log(M+1))
 
 
-    plt.figure()
-    plt.scatter(np.log(tau[0:N-4]), np.log(M+1))
-    plt.show()
+    """plt.figure()
+    plt.scatter(np.log(tau[0:N-1]), np.log(M+1))
+    plt.show()"""
 
     return K
-
 
 
 
@@ -116,7 +120,7 @@ def Gottwald_Melbourne_v2(wn, N, h) :
 
 def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     # energy values for which we will compute the trajectory
-    E_values= np.linspace(0.01, 0.17, 15)
+    E_values= np.linspace(0.01, 0.16, 14)
 
     # relative area occupied by the curve in Poincare section
     relative_area= np.zeros(len(E_values))
@@ -161,10 +165,3 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     return
             
 
-if __name__ == "__main__" :
-    wn = np.array([0,0.1,0.157,0.1])
-    N = 1000
-    h = 10.**-1
-
-    Gottwald_Melbourne_v1(wn, N, h)
-    Chaos_Gottwald_Melbourne(N, h, 50)
