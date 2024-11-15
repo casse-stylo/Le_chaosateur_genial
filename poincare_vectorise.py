@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -34,6 +33,8 @@ class Poincarre_solver():
             self.vi2.append(p.vi2)
 
         self.liste_poincarre = np.array(liste_poincarres)
+        self.epsilon = liste_poincarres[0].epsilon
+
 
         self.yi = np.array(self.yi)
         self.vi = np.array(self.vi)
@@ -116,9 +117,14 @@ class Poincarre_solver():
 
     def Chaos_measure(self, muc= 1e-6) : 
 
+        muc = 130000 * self.epsilon
+
         nb_curve = 0
+        liste_mus = []
         mus = []
         std = []
+        
+        plot = False
 
         for p in self.liste_poincarre :
             # we need to count the number of points in the Poincare section for each trajectory
@@ -128,7 +134,13 @@ class Poincarre_solver():
 
             index = min([25, len(p.ylist), len(p.ylist2)])
 
-            mu = np.sum((np.array(p.ylist[:index])-np.array(p.ylist2[:index]))**2 + (np.array(p.vlist[:index]) - np.array(p.vlist2[:index]))**2)
+            distances = (np.array(p.ylist[:index])-np.array(p.ylist2[:index]))**2 + (np.array(p.vlist[:index]) - np.array(p.vlist2[:index]))**2
+
+
+            while len(distances)< 25:
+                distances = np.append(distances,0)
+
+            mu = np.sum(distances)
             mus.append(mu)
             #print((np.array(p.ylist[:25])-np.array(p.ylist2[:25]))**2 + (np.array(p.vlist[:25]) - np.array(p.vlist2[:25]))**2)
             #print(mu)
@@ -137,7 +149,22 @@ class Poincarre_solver():
 
             if mu<muc : 
                 nb_curve= nb_curve + 1
-        
+
+            liste_mus.append(distances)
+
+        plot = True
+        if plot :
+
+            liste_mus = np.array(liste_mus)
+
+            #for i in range(100):
+            #    plt.scatter(range(1,26),liste_mus[i])
+
+            plt.clf()
+            plt.title("E = "+str(self.E))
+            plt.plot(np.mean(liste_mus,axis = 0))
+            plt.savefig("mu "+str(self.E)+".png")
+
         # we compute the relative area occupied by the curves 
         
         """plt.scatter(np.arange(len(mus)),mus)
@@ -201,12 +228,13 @@ class Poincarre_solver():
 
 
 class Poincarre_test ():
-    def __init__ (self, E, h, N, Pot, Method=RK4):
+    def __init__ (self, E, h, N, Pot, Method=RK4,epsilon = 1e-8):
 
         self.E = E
         self.h = h
         self.N = N
         self.Pot = Pot
+        self.epsilon = epsilon
         self.Method = Method
 
         self.ylist = []
@@ -227,8 +255,8 @@ class Poincarre_test ():
         self.yi = random.uniform(-0.4, 0.4)
         self.vi = random.uniform(-0.4, 0.4)
 
-        self.yi2= self.yi + np.sqrt(1e-7)
-        self.vi2= self.vi - np.sqrt(1e-7)
+        self.yi2= self.yi + np.sqrt(self.epsilon)
+        self.vi2= self.vi - np.sqrt(self.epsilon)
 
         
         if 2*(self.E-self.Pot(0,self.yi))-self.vi**2 < 0 : self.CI()
