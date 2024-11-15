@@ -31,11 +31,11 @@ def Lin_Regression(X,Y) :
 def Gottwald_Melbourne_v1(wn, N, h) :
     Trajectoire = np.zeros((4,N))
     p= np.zeros(N)
-    M= np.zeros(N)
-    #p_mt= np.zeros(N)
     theta= np.zeros(N)
+    M= np.zeros(N)
+    tau= np.zeros(N)
 
-    t= np.linspace(0, N*h, N)
+    #t= np.linspace(0, N*h, N)
     c= 1.7
 
     Trajectoire[:,0]= wn
@@ -46,19 +46,27 @@ def Gottwald_Melbourne_v1(wn, N, h) :
         Trajectoire[:,ntau] = wn
         wn = RK4(wn, f, h, Henon_Heiles)
         #print(wn)
+        tau[ntau]= ntau*h
+  
 
-        x= Trajectoire[0, 0:ntau+1]
-        s= ntau*h
+    data_theta, base_theta= np.histogram(c*tau + Trajectoire[0,:], bins=h*np.ones(N))
+    theta= np.cumsum(data_theta)
+    data_p, base_p= np.histogram(Trajectoire[0,0:N-1]*np.cos(theta), bins=h*np.ones(N-1))
+    p= np.cumsum(data_p)
+    data_M, base_M= np.histogram((p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-3)-tau[0:N-3]), bins=h*np.ones(N-3))
+    M= np.cumsum(data_M)
+    
+    tau= tau.reshape(-1,1)
+    K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
 
-        theta[ntau]= c*s + h*sum(x)
-        p[ntau] = h*sum(x*np.cos(theta[0:ntau+1]))
-        #p_mt[ntau] = p[ntau-1]
-        M[ntau]= (p[ntau]-p[0])**2
 
-    Mmean= sum(M)/(N*h)
-    K= np.log(Mmean+1)/np.log(N*h)
+    plt.figure()
+    plt.scatter(np.log(tau[0:N-4]), np.log(M+1))
+    plt.show()
 
     return K
+
+
 
 
 
@@ -117,7 +125,7 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     for k in range(len(E_values)) : 
         E= E_values[k]
         nb_curve = 0
-        e= 0.5
+        e= 0.3
 
         for n in range(ntraj) :
             b = 0
@@ -132,7 +140,7 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
             ui= np.sqrt(2*(E-Henon_Heiles(0,yi))-vi**2)        
             wn= np.array([0,yi,ui,vi])
 
-            K= Gottwald_Melbourne_v2(wn, N, h)
+            K= Gottwald_Melbourne_v1(wn, N, h)
             if K<e :
                 nb_curve= nb_curve + 1
                 #print(nb_curve)
@@ -160,7 +168,3 @@ if __name__ == "__main__" :
 
     Gottwald_Melbourne_v1(wn, N, h)
     Chaos_Gottwald_Melbourne(N, h, 50)
-
-
-
-
