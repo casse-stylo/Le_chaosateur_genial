@@ -124,18 +124,6 @@ def Chaos_HenonHeiles(h, liste_poincarres,  N, Pot=Henon_Heiles, muc= 1e-4, Meth
 # ---------------------------------------------------------------------
 
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
-
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
-
-
-
 def Lin_Regression(X,Y) :
     linear_regressor = LinearRegression(fit_intercept=True)
     result = linear_regressor.fit(X, Y)
@@ -143,7 +131,7 @@ def Lin_Regression(X,Y) :
     return result.coef_[0], result.intercept_
 
 
-def Gottwald_Melbourne_v1(wn, N, h) :
+"""def Gottwald_Melbourne_v1(wn, N, h) :
     Trajectoire = np.zeros((4,N))
     p= np.zeros(N)
     M= np.zeros(N)
@@ -173,7 +161,7 @@ def Gottwald_Melbourne_v1(wn, N, h) :
     Mmean= sum(M)/(N*h)
     K= np.log(Mmean+1)/np.log(N*h)
 
-    return K
+    return K"""
 
 
 
@@ -196,7 +184,7 @@ def Gottwald_Melbourne_v2(wn, N, h) :
 
         Trajectoire[:,ntau] = wn
         wn = RK4(wn, f, h, Henon_Heiles)
-        print(wn)
+        #print(wn)
 
         x= Trajectoire[0, 0:ntau+1]
         s= ntau*h
@@ -269,12 +257,12 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
             
 
 
-wn = np.array([0,0.1,0.157,0.1])
+"""wn = np.array([0,0.1,0.157,0.1])
 N = 1000
 h = 10.**-1
 
 Gottwald_Melbourne_v2(wn, N, h)
-#Chaos_Gottwald_Melbourne(N, h, 50)
+#Chaos_Gottwald_Melbourne(N, h, 50)"""
 
 
 
