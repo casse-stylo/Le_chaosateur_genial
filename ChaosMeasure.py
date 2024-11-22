@@ -78,7 +78,6 @@ def Gottwald_Melbourne_v1(wn, N, h) :
 
 
 
-
 def Gottwald_Melbourne_v2(wn, N, h) :
     Trajectoire = np.zeros((4,N))
     p= np.zeros(N)
@@ -125,7 +124,7 @@ def Gottwald_Melbourne_v2(wn, N, h) :
 
 def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     # energy values for which we will compute the trajectory
-    E_values= np.linspace(0.01, 0.17, 15)
+    E_values= np.linspace(0.01, 0.16, 14)
 
     # relative area occupied by the curve in Poincare section
     relative_area= np.zeros(len(E_values))
@@ -170,10 +169,3 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
     return
             
 
-if __name__ == "__main__" :
-    wn = np.array([0,0.1,0.157,0.1])
-    N = 1000
-    h = 10.**-1
-
-    Gottwald_Melbourne_v1(wn, N, h)
-    Chaos_Gottwald_Melbourne(N, h, 50)

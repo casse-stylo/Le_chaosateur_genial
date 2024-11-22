@@ -21,6 +21,7 @@ from ChaosMeasure import *
 
 import time
 from poincare_vectorise import*
+from multiprocessing import Pool
 
 def Orbite(wn, N, h, Methode, pot) :
     
@@ -227,6 +228,37 @@ def test_Melbourne (N,h,pot=Henon_Heiles):
 
         Gottwald_Melbourne_v1(wn,N,h)
 
+def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
+
+    # Test du chaos à partir de la première méthode
+    # Affiche une mesure du chaos en fonction de l'énergie, et la distribution des mus
+
+    yi = []
+    vi = []
+
+    Resultat_chaos = 0.
+    mu_moyen = 0.
+    mu_std = 0.
+            
+    print("E = "+str(E))
+
+    liste_poincarres = []
+
+    for j in range(1000):
+
+        liste_poincarres.append(Poincarre_test(E,h,N,pot))
+
+    solver = Poincarre_solver(liste_poincarres,E,h,N,pot,deux=True, plot=False)
+    mesure = solver.Chaos_measure(muc=5e-2)
+    Resultat_chaos = mesure[0]
+    mu_moyen = mesure[1]
+    mu_std = mesure[2]
+
+
+    return Resultat_chaos, mu_moyen, mu_std
+
+
+
 if __name__ == "__main__" :
 
     n = 2
@@ -244,3 +276,15 @@ if __name__ == "__main__" :
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
     
     test_Melbourne(N, h)
+    #print(Gottwald_Melbourne_v1(wn, N, h))
+    #Chaos_Gottwald_Melbourne(N, h, 50)
+    """
+    liste_E = np.arange(0.02,0.165,0.02)
+    table= []
+
+    for i in range(0, len(liste_E)) :
+        table.append([liste_E[i], h, N, "Henon_Heiles"])
+
+    with Pool() as pool :
+        result= pool.starmap(test_chaos_1_parall, table)
+    print("End program")"""
