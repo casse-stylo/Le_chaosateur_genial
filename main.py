@@ -269,6 +269,25 @@ def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
     return Resultat_chaos, mu_moyen, mu_std
 
 
+def test_Melbourne_single_nrj(N,h,E,pot=Henon_Heiles):
+          
+    print("E = "+str(E))
+
+    liste_poincarres = []
+
+    p = Poincarre_test(E,h,N,pot)
+    wn = np.array([0,p.yi,np.sqrt(2*(E-pot(0,p.yi))-p.vi**2),p.vi])
+
+    e, norbite= Test_valeur_K(wn,N,h)
+
+    plt.figure()
+    plt.scatter(e, norbite)
+    plt.xlabel("Condition on K to have non-chaotic orbit")
+    plt.ylabel("Proportion of non-chaotic orbits")
+    plt.show()
+
+    return 
+
 
 if __name__ == "__main__" :
 
@@ -286,7 +305,8 @@ if __name__ == "__main__" :
     
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
     
-    test_Melbourne(N, h)
+    #test_Melbourne(10000, 0.05)
+    print(test_Melbourne_single_nrj(10000, 0.05, 0.14))
     #print(Gottwald_Melbourne_v1(wn, N, h))
     #Chaos_Gottwald_Melbourne(N, h, 50)
     """
