@@ -209,11 +209,29 @@ def test_chaos_1 (h, N, pot):
     plt.legend()
     plt.show()
 
+def test_Melbourne (N,h,pot=Henon_Heiles):
+
+    liste_E = np.arange(0.02,0.165,0.02)
+
+    for i in range(len(liste_E)) :
+        
+        E = liste_E[i]
+                
+        print("E = "+str(E))
+
+        liste_poincarres = []
+
+
+        p = Poincarre_test(E,h,N,pot)
+        wn = np.array([0,p.yi,np.sqrt(2*(E-pot(0,p.yi))-p.vi**2),p.vi])
+
+        Gottwald_Melbourne_v1(wn,N,h)
+
 if __name__ == "__main__" :
 
-    n = 1
+    n = 2
 
-    N = int(100 * 10**n)
+    N = int(1000 * 10**n)
     h = 10.**-n
     pot = Henon_Heiles
     wn = np.array([0,0.1,0.157,0.1])
@@ -225,4 +243,4 @@ if __name__ == "__main__" :
     
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
     
-    Gottwald_Melbourne_v1(wn, N, h)
+    test_Melbourne(N, h)

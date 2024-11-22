@@ -45,26 +45,35 @@ def Gottwald_Melbourne_v1(wn, N, h) :
 
         Trajectoire[:,ntau] = wn
         wn = RK4(wn, f, h, Henon_Heiles)
-        #print(wn)
-        tau[ntau]= ntau*h
+        tau[ntau]= ntau
   
 
-    data_theta, base_theta= np.histogram(c*tau + Trajectoire[0,:], bins=h*np.ones(N))
-    theta= np.cumsum(data_theta)
-    data_p, base_p= np.histogram(Trajectoire[0,0:N-1]*np.cos(theta), bins=h*np.ones(N-1))
-    p= np.cumsum(data_p)
-    data_M, base_M= np.histogram((p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-3)-tau[0:N-3]), bins=h*np.ones(N-3))
+    theta= tau + np.cumsum(Trajectoire[0]+Trajectoire[1])
+    p=  np.cumsum(Trajectoire[0]*np.cos(theta))
+    data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
     M= np.cumsum(data_M)
     
-    tau= tau.reshape(-1,1)
-    K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
+    M = np.zeros(N//10)
+    for _ in range(N//10):
+        M[_] = 1/(N) * np.sum(((((np.roll(p,_)-p)[0:N//10]))**2))
+
+    print(np.size(M))
+    print(np.size(tau[0:N//10]))
+
+    a, b = np.polyfit(np.log(tau[0:N//10]+1),np.log(M+1),1)
+    print(a,b)
+
+    #tau= tau.reshape(-1,1)
+    #K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
 
 
     plt.figure()
-    plt.scatter(np.log(tau[0:N-4]), np.log(M+1))
+
+
+    plt.scatter(np.log(tau[0:N//10]), np.log(M+1))
     plt.show()
 
-    return K
+    #return K
 
 
 
