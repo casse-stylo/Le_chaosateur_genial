@@ -29,51 +29,62 @@ def Lin_Regression(X,Y) :
 
 
 def Gottwald_Melbourne_v1(wn, N, h) :
-    Trajectoire = np.zeros((4,N))
-    p= np.zeros(N)
-    theta= np.zeros(N)
-    M= np.zeros(N)
-    tau= np.zeros(N)
-
-    #t= np.linspace(0, N*h, N)
-    c= 1.7
-
-    Trajectoire[:,0]= wn
-    wn = RK4(wn, f, h, Henon_Heiles)
-
-    for ntau in range(1,N) : 
-
-        Trajectoire[:,ntau] = wn
-        wn = RK4(wn, f, h, Henon_Heiles)
-        tau[ntau]= ntau
-  
-
-    theta= tau + np.cumsum(Trajectoire[0]+Trajectoire[1])
-    p=  np.cumsum(Trajectoire[0]*np.cos(theta))
-    data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
-    M= np.cumsum(data_M)
     
-    M = np.zeros(N//10)
-    for _ in range(N//10):
-        M[_] = 1/(N) * np.sum(((((np.roll(p,_)-p)[0:N//10]))**2))
+    liste_a = []
+    norbite = 0
+    for k in range(100):
+        Trajectoire = np.zeros((4,N))
+        p= np.zeros(N)
+        theta= np.zeros(N)
+        M= np.zeros(N)
+        tau= np.zeros(N)
 
-    print(np.size(M))
-    print(np.size(tau[0:N//10]))
+        #t= np.linspace(0, N*h, N)
+        c= 1.7
 
-    a, b = np.polyfit(np.log(tau[0:N//10]+1),np.log(M+1),1)
-    print(a,b)
+        Trajectoire[:,0]= wn
+        wn = RK4(wn, f, h, Henon_Heiles)
+
+        for ntau in range(1,N) : 
+
+            Trajectoire[:,ntau] = wn
+            wn = RK4(wn, f, h, Henon_Heiles)
+            tau[ntau]= ntau*h
+    
+
+        theta= c*tau + h*np.cumsum(Trajectoire[0]+Trajectoire[1])
+        p= h* np.cumsum((Trajectoire[0]+Trajectoire[1])*np.cos(theta))
+        #data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
+        #M= np.cumsum(data_M)
+        
+        M = np.zeros(N//10)
+        for _ in range(N//10):
+            M[_] = 1/(9*N//10) * np.sum((np.roll(p,-_)[0:9*N//10]-p[0:9*N//10])**2)
+
+
+        a, b = np.polyfit(np.log(tau[0:N//10]+1),np.log(M[0:N//10]+1e-5),1)
+        if a < 0.5:
+            norbite +=1
+
+    
 
     #tau= tau.reshape(-1,1)
     #K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
 
-
+    #plt.plot(liste_a)
+    #plt.show()
+    #a = np.mean(np.array([liste_a]))
+    """print(a)
     plt.figure()
 
 
-    plt.scatter(np.log(tau[0:N//10]), np.log(M+1))
-    plt.show()
+    plt.scatter(np.log(tau[N//20:N//10]), np.log(M[N//20:N//10]+1e-5))
+    plt.show()"""
 
     #return K
+
+    return norbite /100
+
 
 
 

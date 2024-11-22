@@ -170,7 +170,7 @@ def test_chaos_1 (h, N, pot):
     yi = []
     vi = []
 
-    liste_E = np.arange(0.02,0.165,0.02)
+    liste_E = np.arange(0.12,0.165,0.02)
     Resultat_chaos = np.zeros(len(liste_E))
     mu_moyen = np.zeros(len(liste_E))
     mu_std = np.zeros(len(liste_E))
@@ -213,6 +213,7 @@ def test_chaos_1 (h, N, pot):
 def test_Melbourne (N,h,pot=Henon_Heiles):
 
     liste_E = np.arange(0.02,0.165,0.02)
+    liste_a = []
 
     for i in range(len(liste_E)) :
         
@@ -226,7 +227,17 @@ def test_Melbourne (N,h,pot=Henon_Heiles):
         p = Poincarre_test(E,h,N,pot)
         wn = np.array([0,p.yi,np.sqrt(2*(E-pot(0,p.yi))-p.vi**2),p.vi])
 
-        Gottwald_Melbourne_v1(wn,N,h)
+        liste_a.append(Gottwald_Melbourne_v1(wn,N,h))
+
+    liste_a = np.array(liste_a)
+    plt.plot(liste_E, liste_a)
+
+    axes = plt.gca()
+    axes.set_xlabel("E [J]")
+    #axes.set_ylabel(r"$K = \lim_{+\inf} \log M(t) / \log t$")
+    axes.set_ylabel(r"Proportion ergodique")
+
+    plt.show()
 
 def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
 
@@ -261,10 +272,10 @@ def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
 
 if __name__ == "__main__" :
 
-    n = 2
+    n = 1
 
-    N = int(1000 * 10**n)
-    h = 10.**-n
+    N = int(400 * 10**n)
+    h = 0.5*10.**-n
     pot = Henon_Heiles
     wn = np.array([0,0.1,0.157,0.1])
     E = 1/16
