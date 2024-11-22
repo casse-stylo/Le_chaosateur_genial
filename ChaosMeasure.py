@@ -62,7 +62,7 @@ def Gottwald_Melbourne_v1(wn, N, h) :
             M[_] = 1/(9*N//10) * np.sum((np.roll(p,-_)[0:9*N//10]-p[0:9*N//10])**2)
 
 
-        a, b = np.polyfit(np.log(tau[0:N//10]+1),np.log(M[0:N//10]+1e-5),1)
+        a, b = np.polyfit(np.log(tau[0:N//10]+h),np.log(M[0:N//10]+1e-5),1)
         if a < 0.5:
             norbite +=1
 
