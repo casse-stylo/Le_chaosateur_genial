@@ -9,6 +9,197 @@ from Potentiel import *
 from RK4 import *
 import random
     
+class Melbourne_solver ():
+    def __init__(self, liste_poincarres, E, h, N, Pot, c = 1.7,plot = False,Method=RK4):
+
+        self.E = E
+        self.h = h
+        self.N = N
+        self.Pot = Pot
+        
+
+        self.yi = []
+        self.vi = []
+
+        self.theta = []
+        self.p = []
+
+
+        for p in liste_poincarres :
+            self.yi.append(p.yi)
+            self.vi.append(p.vi)
+
+        ntraj = len(liste_poincarres)
+
+        self.liste_poincarre = np.array(liste_poincarres)
+        self.epsilon = liste_poincarres[0].epsilon
+
+
+        self.yi = np.array(self.yi)
+        self.vi = np.array(self.vi)
+
+        self.ntraj = len(self.yi)
+
+
+        u= np.sqrt(2*(self.E-self.Pot(0,self.yi))-self.vi**2)        # initial x velocity
+
+        wn= np.array([[np.zeros(self.ntraj),self.yi,u,self.vi],[np.zeros(self.ntraj),self.yi,u,self.vi]])
+        Trajectoires = np.zeros((ntraj,N,4))
+
+
+        """
+        Structure de wn
+        premier indice = 0 ou 1 : itération précédente ou en cours
+        deuxième indice = 0,...,3 : x, y, vx, vy
+        troisième indice = 0, ..., ntraj : particule considérée
+        """
+
+        for _ in range(self.N) : 
+
+            wn[0,:,:] = wn[1,:,:]
+            wn[1,:,:] = self.RK4(wn, self.f, self.h, self.Pot)
+            Trajectoires[:,_,0] = wn[1,0,:]
+            Trajectoires[:,_,1] = wn[1,1,:]            
+            Trajectoires[:,_,2] = wn[1,2,:]            
+            Trajectoires[:,_,3] = wn[1,3,:]
+          
+        self.liste_poincarre = liste_poincarres
+        self.Trajectoires = Trajectoires
+
+        if plot :
+            self.plot()
+            
+    
+
+
+    def plot (self, deux = False):
+
+        for p in self.liste_poincarre :
+            p.plot(deux)
+
+        plt.show()
+
+    def Chaos_measure(self, a_crit= 0.5, calibre = True) : 
+
+        N = self.N
+
+        nb_curve = 0
+        h = self.h
+
+        liste_a = []
+        plot = False
+
+        for i in range(len(self.liste_poincarre)) :
+
+        
+            #t= np.linspace(0, N*h, N)
+            c= 1.7
+
+            Trajectoire = self.Trajectoires[i,:,:]
+
+            tau = np.arange(0,self.N)*self.h
+
+
+            theta= c*tau + self.h*np.cumsum(Trajectoire[:,0]+Trajectoire[:,1])
+            p= self.h* np.cumsum((Trajectoire[:,0]+Trajectoire[:,1])*np.cos(theta))
+            #data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
+            #M= np.cumsum(data_M)
+
+            M = np.zeros(N//10)
+            for _ in range(N//10):
+                M[_] = 1/(9*N//10) * np.sum((np.roll(p,-_)[0:9*N//10]-p[0:9*N//10])**2)
+
+
+            a, b = np.polyfit(np.log(tau[0:N//10]+h),np.log(M[0:N//10]+1e-5),1)
+            liste_a.append(a)
+
+            if a < a_crit:
+                nb_curve +=1
+
+
+
+     
+        #tau= tau.reshape(-1,1)
+        #K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
+        #a = np.mean(np.array([liste_a]))
+        """print(a)
+        plt.figure()
+
+
+        plt.scatter(np.log(tau[N//20:N//10]), np.log(M[N//20:N//10]+1e-5))
+        plt.show()"""
+
+        #return K
+        
+        liste_a = np.array(liste_a)
+        liste_a_ordered= np.sort(liste_a)
+
+        if(calibre==False) :
+            plt.plot(liste_a_ordered)
+            plt.ylabel('K value')
+            plt.title(f"Energy {self.E}")
+            plt.show()
+        
+        
+        print(nb_curve)
+        print(np.median(liste_a))
+        
+        if calibre :
+            return nb_curve/len(self.liste_poincarre)
+        else :
+            return np.median(liste_a)
+
+
+    def RK4 (self,wn, f, h, pot):
+        """apply RK4 method to a 4D phase space vector
+        :param wn: vector containing x,y position and u,v velocities
+        :param f: function giving the derivatives of the Hamiltonian
+        :param h: time step
+        :param pot: gravitational potential we consider  
+        :result: wn updated according to RK4 scheme
+        """
+        
+        k1 = f(wn[1,:,:], pot)
+        k2 = f(wn[1,:,:] + h/2 * k1, pot)
+        k3 = f(wn[1,:,:]+ h/2 * k2, pot)
+        k4 = f(wn[1,:,:]+h*k3, pot)
+
+
+        return wn[1,:,:] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
+
+
+    def Fx (self,Pot, x, y, h= 1e-3):
+        """derivation with 5 points
+        :param Pot: function we want to derive 
+        :param x: position along x axis
+        :param y: position along y axis
+        :param h: time step
+        :return: partial derivative of the function with respect to x
+        """
+        return 1/(12*h) * (-Pot(x+2*h, y)+ 8*Pot(x+h, y) - 8*Pot(x-h, y) + Pot(x-2*h, y))
+
+
+    def Fy (self,Pot, x, y, h = 1e-3):
+        """derivation with 5 points
+        :param Pot: function we want to derive 
+        :param x: position along x axis
+        :param y: position along y axis
+        :param h: time step
+        :return: partial derivative of the function with respect to y
+        """
+        return 1/(12*h) * (-Pot(x,y+2*h)+ 8*Pot(x,y+h) - 8*Pot(x,y-h) + Pot(x,y-2*h))
+
+
+    # Differential equation function
+
+    def f(self,wn, pot=Kepler):
+        """function giving the derivatives of the Hamiltonian
+        :param wn: vector containing x,y position and u,v velocities
+        :param pot: gravitational potential we consider
+        :return: array of Hamiltonian's derivatives 
+        """
+        return np.array([wn[2], wn[3], -self.Fx(pot,wn[0], wn[1]), -self.Fy(pot,wn[0], wn[1])])
+
 
 class Poincarre_solver():
     def __init__(self, liste_poincarres, E, h, N, Pot, plot = False, deux= False, Method=RK4):

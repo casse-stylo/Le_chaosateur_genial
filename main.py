@@ -210,7 +210,54 @@ def test_chaos_1 (h, N, pot):
     plt.legend()
     plt.show()
 
-def test_Melbourne (N,h,pot=Henon_Heiles):
+
+
+def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
+
+    yi = []
+    vi = []
+    
+    # E_50 permet de calibrer a_crit pour que la moitie des orbites de cette energie soient considerees chaotiques
+
+    liste_E = np.arange(0.02,0.165,0.02)
+    Resultat_chaos = np.zeros(len(liste_E))
+    mu_moyen = np.zeros(len(liste_E))
+    mu_std = np.zeros(len(liste_E))
+
+    liste_poincarres = []
+
+    for j in range(1000):
+
+            liste_poincarres.append(Poincarre_test(E_50,h,N,pot))
+    solver = Melbourne_solver(liste_poincarres,E_50,h,N,pot, plot=False)
+    a_crit = solver.Chaos_measure(calibre = False)
+    
+    for i in range(len(liste_E)) :
+        
+        E = liste_E[i]
+                
+        print("E = "+str(E))
+
+        liste_poincarres = []
+
+        for j in range(1000):
+
+            liste_poincarres.append(Poincarre_test(E,h,N,pot))
+
+        solver = Melbourne_solver(liste_poincarres,E,h,N,pot, plot=False)
+        mesure = solver.Chaos_measure(a_crit=a_crit, calibre = True)
+        Resultat_chaos[i] = mesure
+
+    axes = plt.gca()
+    axes.set_xlabel("E [J]")
+    axes.set_ylabel("Surface relative")
+
+    plt.plot(liste_E,Resultat_chaos)
+    
+    plt.legend()
+    plt.show()
+
+    """
 
     liste_E = np.arange(0.02,0.165,0.02)
     liste_a = []
@@ -237,7 +284,8 @@ def test_Melbourne (N,h,pot=Henon_Heiles):
     #axes.set_ylabel(r"$K = \lim_{+\inf} \log M(t) / \log t$")
     axes.set_ylabel(r"Proportion ergodique")
 
-    plt.show()
+    plt.show()"""
+
 
 def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
 
@@ -269,26 +317,6 @@ def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
     return Resultat_chaos, mu_moyen, mu_std
 
 
-def test_Melbourne_single_nrj(N,h,E,pot=Henon_Heiles):
-          
-    print("E = "+str(E))
-
-    liste_poincarres = []
-
-    p = Poincarre_test(E,h,N,pot)
-    wn = np.array([0,p.yi,np.sqrt(2*(E-pot(0,p.yi))-p.vi**2),p.vi])
-
-    e, norbite= Test_valeur_K(wn,N,h)
-
-    plt.figure()
-    plt.scatter(e, norbite)
-    plt.xlabel("Condition on K to have non-chaotic orbit")
-    plt.ylabel("Proportion of non-chaotic orbits")
-    plt.show()
-
-    return 
-
-
 if __name__ == "__main__" :
 
     n = 1
@@ -305,10 +333,10 @@ if __name__ == "__main__" :
     
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
     
-    #test_Melbourne(10000, 0.05)
-    test_Melbourne_single_nrj(10000, 0.05, 0.14)
+    test_Melbourne(10000, 0.05)
     #print(Gottwald_Melbourne_v1(wn, N, h))
-    #Chaos_Gottwald_Melbourne(N, h, 50)
+
+
     """
     liste_E = np.arange(0.02,0.165,0.02)
     table= []

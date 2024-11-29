@@ -183,49 +183,48 @@ def Chaos_Gottwald_Melbourne(N, h, ntraj=300) :
 
 def Test_valeur_K(wn, N, h) :
 
-    e= np.arange(0.1, 0.9, 0.1)
     liste_a = []
-    norbite = np.zeros(len(e))
+    print('oh')
+    for k in range(100):
+        Trajectoire = np.zeros((4,N))
+        p= np.zeros(N)
+        theta= np.zeros(N)
+        M= np.zeros(N)
+        tau= np.zeros(N)
 
-    for i in range(len(e)) :
-        for k in range(100):
-            Trajectoire = np.zeros((4,N))
-            p= np.zeros(N)
-            theta= np.zeros(N)
-            M= np.zeros(N)
-            tau= np.zeros(N)
+        #t= np.linspace(0, N*h, N)
+        c= 1.7
 
-            #t= np.linspace(0, N*h, N)
-            c= 1.7
+        Trajectoire[:,0]= wn
+        wn = RK4(wn, f, h, Henon_Heiles)
 
-            Trajectoire[:,0]= wn
+        for ntau in range(1,N) : 
+
+            Trajectoire[:,ntau] = wn
             wn = RK4(wn, f, h, Henon_Heiles)
-
-            for ntau in range(1,N) : 
-
-                Trajectoire[:,ntau] = wn
-                wn = RK4(wn, f, h, Henon_Heiles)
-                tau[ntau]= ntau*h
-        
-
-            theta= c*tau + h*np.cumsum(Trajectoire[0]+Trajectoire[1])
-            p= h* np.cumsum((Trajectoire[0]+Trajectoire[1])*np.cos(theta))
-            #data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
-            #M= np.cumsum(data_M)
-            
-            M = np.zeros(N//10)
-            for _ in range(N//10):
-                M[_] = 1/(9*N//10) * np.sum((np.roll(p,-_)[0:9*N//10]-p[0:9*N//10])**2)
-
-
-            a, b = np.polyfit(np.log(tau[0:N//10]+h),np.log(M[0:N//10]+1e-5),1)
-            if a < e[i]:
-                norbite[i] +=1
-
-        norbite[i]= norbite[i]/100 
-
+            tau[ntau]= ntau*h
     
 
-    return e, norbite
+        theta= c*tau + h*np.cumsum(Trajectoire[0]+Trajectoire[1])
+        p= h* np.cumsum((Trajectoire[0]+Trajectoire[1])*np.cos(theta))
+        #data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
+        #M= np.cumsum(data_M)
+        
+        M = np.zeros(N//10)
+        for _ in range(N//10):
+            M[_] = 1/(9*N//10) * np.sum((np.roll(p,-_)[0:9*N//10]-p[0:9*N//10])**2)
+
+
+        a, b = np.polyfit(np.log(tau[0:N//10]+h),np.log(M[0:N//10]+1e-5),1)
+        print(a)
+        liste_a.append(a)
+
+    array_a= np.array(liste_a)
+    median_a= np.nanmedian(array_a[0:10]) 
+    """array_a_sort= np.sort(array_a)
+    acrit_idx= int(len(array_a_sort)/2)
+    median_a= array_a_sort[acrit_idx]"""    
+
+    return median_a
             
 
