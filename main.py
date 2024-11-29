@@ -306,7 +306,7 @@ if __name__ == "__main__" :
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
     
     #test_Melbourne(10000, 0.05)
-    print(test_Melbourne_single_nrj(10000, 0.05, 0.14))
+    test_Melbourne_single_nrj(10000, 0.05, 0.14)
     #print(Gottwald_Melbourne_v1(wn, N, h))
     #Chaos_Gottwald_Melbourne(N, h, 50)
     """
