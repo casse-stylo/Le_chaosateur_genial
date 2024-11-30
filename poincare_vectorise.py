@@ -9,6 +9,8 @@ from Potentiel import *
 from RK4 import *
 import random
     
+    
+
 class Melbourne_solver ():
     def __init__(self, liste_poincarres, E, h, N, Pot, c = 1.7,plot = False,Method=RK4):
 
@@ -49,9 +51,9 @@ class Melbourne_solver ():
 
         """
         Structure de wn
-        premier indice = 0 ou 1 : itération précédente ou en cours
-        deuxième indice = 0,...,3 : x, y, vx, vy
-        troisième indice = 0, ..., ntraj : particule considérée
+        premier indice = 0 ou 1 : itÃ©ration prÃ©cÃ©dente ou en cours
+        deuxiÃ¨me indice = 0,...,3 : x, y, vx, vy
+        troisiÃ¨me indice = 0, ..., ntraj : particule considÃ©rÃ©e
         """
 
         for _ in range(self.N) : 
@@ -121,6 +123,9 @@ class Melbourne_solver ():
      
         #tau= tau.reshape(-1,1)
         #K, b= Lin_Regression(np.log(tau[0:N-4]+1e-7), np.log(M+1))
+
+        #plt.plot(liste_a)
+        #plt.show()
         #a = np.mean(np.array([liste_a]))
         """print(a)
         plt.figure()
@@ -132,13 +137,6 @@ class Melbourne_solver ():
         #return K
         
         liste_a = np.array(liste_a)
-        liste_a_ordered= np.sort(liste_a)
-
-        if(calibre==False) :
-            plt.plot(liste_a_ordered)
-            plt.ylabel('K value')
-            plt.title(f"Energy {self.E}")
-            plt.show()
         
         
         print(nb_curve)
@@ -148,7 +146,6 @@ class Melbourne_solver ():
             return nb_curve/len(self.liste_poincarre)
         else :
             return np.median(liste_a)
-
 
     def RK4 (self,wn, f, h, pot):
         """apply RK4 method to a 4D phase space vector
@@ -245,9 +242,9 @@ class Poincarre_solver():
 
         """
         Structure de wn
-        premier indice = 0 ou 1 : itération précédente ou en cours
-        deuxième indice = 0,...,3 : x, y, vx, vy
-        troisième indice = 0, ..., ntraj : particule considérée
+        premier indice = 0 ou 1 : itÃ©ration prÃ©cÃ©dente ou en cours
+        deuxiÃ¨me indice = 0,...,3 : x, y, vx, vy
+        troisiÃ¨me indice = 0, ..., ntraj : particule considÃ©rÃ©e
         """
 
         for _ in range(self.N) : 
@@ -460,3 +457,4 @@ class Poincarre_test ():
 
         plt.scatter(self.list[0],self.list[1],s=0.5,color="red")
         if deux : plt.scatter(self.list2[0],self.list2[1],s=0.5,color="blue")
+

@@ -118,7 +118,7 @@ def Energie(wn, N, h, pot, plot = False):
 
 def test_solvers ():
 
-    # Teste les différentes méthodes de résolution de l'équation du mouvement en comparant la conservation de l'énergie
+    # Teste les diffÃ©rentes mÃ©thodes de rÃ©solution de l'Ã©quation du mouvement en comparant la conservation de l'Ã©nergie
 
     energies_rk2 = []
     energies_rk4 = []
@@ -164,8 +164,8 @@ def test_section_poincarre(E, h, N, pot, ntraj = 50):
 
 def test_chaos_1 (h, N, pot):
 
-    # Test du chaos à partir de la première méthode
-    # Affiche une mesure du chaos en fonction de l'énergie, et la distribution des mus
+    # Test du chaos Ã  partir de la premiÃ¨re mÃ©thode
+    # Affiche une mesure du chaos en fonction de l'Ã©nergie, et la distribution des mus
 
     yi = []
     vi = []
@@ -209,8 +209,6 @@ def test_chaos_1 (h, N, pot):
 
     plt.legend()
     plt.show()
-
-
 
 def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
 
@@ -286,11 +284,10 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
 
     plt.show()"""
 
-
 def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
 
-    # Test du chaos à partir de la première méthode
-    # Affiche une mesure du chaos en fonction de l'énergie, et la distribution des mus
+    # Test du chaos Ã  partir de la premiÃ¨re mÃ©thode
+    # Affiche une mesure du chaos en fonction de l'Ã©nergie, et la distribution des mus
 
     yi = []
     vi = []
@@ -317,26 +314,26 @@ def test_chaos_1_parall (E, h=10.**-1, N=1000, pot=Henon_Heiles):
     return Resultat_chaos, mu_moyen, mu_std
 
 
+
 if __name__ == "__main__" :
 
-    n = 1
+    n = 2
 
-    N = int(400 * 10**n)
-    h = 0.5*10.**-n
+    N = int(4000)
+    h = 0.05
     pot = Henon_Heiles
     wn = np.array([0,0.1,0.157,0.1])
     E = 1/16
 
     #test_solvers()
-    #test_section_poincarre(E = 1/16, h = 1e-2.5, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermées
+    #test_section_poincarre(E = 1/16, h = 1e-2.5, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
     
     
-    #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarré
+    #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
     
-    test_Melbourne(10000, 0.05)
+    test_Melbourne(N, h)
     #print(Gottwald_Melbourne_v1(wn, N, h))
-
-
+    #Chaos_Gottwald_Melbourne(N, h, 50)
     """
     liste_E = np.arange(0.02,0.165,0.02)
     table= []
@@ -347,3 +344,4 @@ if __name__ == "__main__" :
     with Pool() as pool :
         result= pool.starmap(test_chaos_1_parall, table)
     print("End program")"""
+
