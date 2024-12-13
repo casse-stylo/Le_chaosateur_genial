@@ -81,6 +81,7 @@ class Melbourne_solver ():
 
         plt.show()
 
+
     def Chaos_measure(self, a_crit= 0.5, calibre = True) : 
 
         N = self.N
@@ -146,6 +147,8 @@ class Melbourne_solver ():
             return nb_curve/len(self.liste_poincarre)
         else :
             return np.median(liste_a)
+        
+
 
     def RK4 (self,wn, f, h, pot):
         """apply RK4 method to a 4D phase space vector
@@ -303,7 +306,7 @@ class Poincarre_solver():
 
         plt.show()
 
-    def Chaos_measure(self, muc= 1e-6) : 
+    def Chaos_measure(self, muc= 1e-4) : 
 
         muc = 130000 * self.epsilon
 
@@ -456,5 +459,7 @@ class Poincarre_test ():
         self.list2=np.array([self.ylist2, self.vlist2])
 
         plt.scatter(self.list[0],self.list[1],s=0.5,color="red")
+        plt.xlabel("y")
+        plt.ylabel("v")
         if deux : plt.scatter(self.list2[0],self.list2[1],s=0.5,color="blue")
 

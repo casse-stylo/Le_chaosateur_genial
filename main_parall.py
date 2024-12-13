@@ -1,12 +1,3 @@
-#    _      ______       _____ _    _          ____   _____      _______ ______ _    _ _____         _____   __  _   _ _____          _      
-#   | |    |  ____|     / ____| |  | |   /\   / __ \ / ____|  /\|__   __|  ____| |  | |  __ \       / ____|_/_/_| \ | |_   _|   /\   | |     
-#   | |    | |__       | |    | |__| |  /  \ | |  | | (___   /  \  | |  | |__  | |  | | |__) |     | |  __| ____|  \| | | |    /  \  | |     
-#   | |    |  __|      | |    |  __  | / /\ \| |  | |\___ \ / /\ \ | |  |  __| | |  | |  _  /      | | |_ |  _| | . ` | | |   / /\ \ | |     
-#   | |____| |____     | |____| |  | |/ ____ \ |__| |____) / ____ \| |  | |____| |__| | | \ \      | |__| | |___| |\  |_| |_ / ____ \| |____ 
-#   |______|______|     \_____|_|  |_/_/    \_\____/|_____/_/    \_\_|  |______|\____/|_|  \_\      \_____|_____|_| \_|_____/_/    \_\______|
-#                                                                                                                                            
-# 
-
 import numpy as np
 np.float = float
 
@@ -195,8 +186,8 @@ def test_chaos_1 (h, N, pot):
         mu_std[i] = mesure[2]
 
     axes = plt.gca()
-    axes.set_xlabel("Energy")
-    axes.set_ylabel("Relative area")
+    axes.set_xlabel("E [J]")
+    axes.set_ylabel("Surface relative")
 
     plt.scatter(liste_E, Resultat_chaos)
     plt.show()
@@ -285,6 +276,37 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
 
     plt.show()"""
 
+def test_chaos_1_parall (E, Result_chaos_dict, h=10.**-1, N=1000, pot=Henon_Heiles):
+
+    # Test du chaos Ã  partir de la premiÃ¨re mÃ©thode
+    # Affiche une mesure du chaos en fonction de l'Ã©nergie, et la distribution des mus
+
+    yi = []
+    vi = []
+
+    Resultat_chaos = 0.
+    mu_moyen = 0.
+    mu_std = 0.
+            
+    print("E = "+str(E))
+
+    liste_poincarres = []
+
+    for j in range(1000):
+
+        liste_poincarres.append(Poincarre_test(E,h,N,pot))
+
+    solver = Poincarre_solver(liste_poincarres,E,h,N,pot,deux=True, plot=False)
+    mesure = solver.Chaos_measure(muc=5e-2)
+    Resultat_chaos = mesure[0]
+    mu_moyen = mesure[1]
+    mu_std = mesure[2]
+
+    print(Resultat_chaos)
+    Result_chaos_dict["result-chaos"]= Resultat_chaos
+
+
+    return 
 
 
 
@@ -297,17 +319,62 @@ if __name__ == "__main__" :
     pot = Henon_Heiles
     wn = np.array([0,0.1,0.157,0.1])
     E = 1/16
+    
+    liste_E = np.arange(0.02,0.165,0.02)
+    Result_chaos_dict= {}
 
-    #test_solvers()
-    test_section_poincarre(E = 1/100, h = 1e-3, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
-    
-    
-    #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
-    
-    #test_Melbourne(N, h)
-    #print(Gottwald_Melbourne_v1(wn, N, h))
-    #Chaos_Gottwald_Melbourne(N, h, 50)
-    
+    """with Pool() as pool :
+        result= pool.map(test_chaos_1_parall, range(0.02, 0.165, 0.02))
+        Result_chaos.append(result)
+
+    print("Process finished")"""
 
 
+    for i in range(len(liste_E)//4) : 
+        p1= Process(target=test_chaos_1_parall, args=(liste_E[4*i],Result_chaos_dict,))
+        p2= Process(target=test_chaos_1_parall, args=(liste_E[4*i +1],Result_chaos_dict,))
+        p3= Process(target=test_chaos_1_parall, args=(liste_E[4*i +2],Result_chaos_dict,))
+        p4= Process(target=test_chaos_1_parall, args=(liste_E[4*i +3],Result_chaos_dict,))
 
+        p1.start()
+        p2.start()
+        p3.start()
+        p4.start()
+
+        p1.join()
+        p2.join()
+        p3.join()
+        p4.join()
+
+    Result_chaos= Result_chaos_dict.get("result-chaos")
+    print(Result_chaos)
+    Energy= np.array(liste_E)
+
+    #plt.figure()
+    #plt.scatter(Energy, Result_chaos)
+    #plt.show()
+
+    #p1= Process(target=test_chaos_1_parall, args=(0.02,))
+    #p2= Process(target=test_chaos_1_parall, args=(0.06,))
+
+    """p1.start()
+    print('processing 1')
+    p2.start()
+    print('processing 2')
+    p1.join()
+    p2.join()"""
+
+
+    """liste_E = np.arange(0.02,0.165,0.02)
+    table= []
+
+    p= Process(target=test_chaos_1_parall, args=(liste_E))
+    p.start()
+    p.join()
+
+    for i in range(0, len(liste_E)) :
+        table.append([liste_E[i], h, N, "Henon_Heiles"])
+
+    with Pool() as pool :
+        result= pool.starmap(test_chaos_1_parall, liste_E)
+    print("End program")"""
