@@ -103,6 +103,8 @@ class Melbourne_solver ():
 
 
             theta= c*tau + self.h*np.cumsum(Trajectoire[:,0]+Trajectoire[:,1])
+
+
             p= self.h* np.cumsum((Trajectoire[:,0]+Trajectoire[:,1])*np.cos(theta))
             #data_M = (p[1:len(p)]-p[0:len(p)-1])**2/(N*h*np.ones(N-1)-tau[0:N-1])
             #M= np.cumsum(data_M)
