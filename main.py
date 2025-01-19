@@ -119,7 +119,7 @@ def Energie(wn, N, h, pot, plot = False):
 
 def test_solvers ():
 
-    # Teste les diffÃ©rentes mÃ©thodes de rÃ©solution de l'Ã©quation du mouvement en comparant la conservation de l'Ã©nergie
+    # Tests the different integrators for the resolution of the equation of motion in the case of the Keplerian potential, and compare the energy conservation
 
     energies_rk2 = []
     energies_rk4 = []
@@ -292,14 +292,15 @@ if __name__ == "__main__" :
 
     n = 2
 
-    N = int(4000)
+    N = int(8000)
     h = 0.05
     pot = Henon_Heiles
     wn = np.array([0,0.1,0.157,0.1])
     E = 1/16
 
+    Plot_Trajectoires(wn, N, h, Kepler)
     #test_solvers()
-    test_section_poincarre(E = 1/100, h = 1e-3, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
+    #test_section_poincarre(E = 1/100, h = 1e-3, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
     
     
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
