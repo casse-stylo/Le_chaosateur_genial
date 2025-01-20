@@ -3,10 +3,7 @@ np.float = float
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
-from Potentiel import *
-from RK4 import *
-from RK2 import *
-from Euler import *
+from Orbites import*
 import random
 
 

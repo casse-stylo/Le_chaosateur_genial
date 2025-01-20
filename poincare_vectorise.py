@@ -4,9 +4,8 @@ import random
 
 import numpy as np
 import matplotlib.pyplot as plt
+from Orbites import*
 
-from Potentiel import *
-from RK4 import *
 import random
     
     

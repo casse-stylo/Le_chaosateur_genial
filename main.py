@@ -11,12 +11,8 @@ import numpy as np
 np.float = float
 
 import matplotlib.pyplot as plt
-from Potentiel import*
+from Orbites import*
 
-from RK2 import*
-from Euler import*
-from RK4 import*
-from Poincare import*
 from ChaosMeasure import *
 
 import time
@@ -24,15 +20,6 @@ from poincare_vectorise import*
 from multiprocessing import Pool
 from multiprocessing import Process
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
-
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
 
 def Plot_Trajectoires(wn, N, h, pot) :
 
