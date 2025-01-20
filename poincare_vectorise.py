@@ -393,10 +393,6 @@ class Particule ():
         self.vlist2 = []
 
         self.CI()
-
-        #self.poincarre()
-
-        #self.plot()
                 
   
     def CI(self):

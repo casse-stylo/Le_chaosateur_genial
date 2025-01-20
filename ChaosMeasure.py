@@ -7,16 +7,6 @@ from Orbites import*
 import random
 
 
-def Orbite(wn, N, h, Methode, pot) :
-    
-    Trajectoire = np.zeros((4,N))
-
-    for i in range(N) : 
-        Trajectoire[:,i] = wn
-        wn = Methode(wn, f, h,pot)
-
-    return Trajectoire
-
 
 def Lin_Regression(X,Y) :
     linear_regressor = LinearRegression(fit_intercept=True)

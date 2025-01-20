@@ -132,7 +132,7 @@ def test_solvers ():
 
     axes.invert_xaxis()
 
-    axes.set_xlabel(r"$\ln \Delta t [s]$")
+    axes.set_xlabel(r"$\log \Delta t [s]$")
     axes.set_ylabel(r"max $\ln \left(\Delta E / E \right)$")
 
     plt.legend()
@@ -212,7 +212,7 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
 
     liste_particules = []
 
-    for j in range(100):
+    for j in range(1000):
 
             liste_particules.append(Particule(E_50,h,N,pot))
     solver = Melbourne_solver(liste_particules,E_50,h,N,pot, plot=False)
@@ -226,7 +226,7 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
 
         liste_particules = []
 
-        for j in range(100):
+        for j in range(1000):
 
             liste_particules.append(Particule(E,h,N,pot))
 
@@ -250,22 +250,20 @@ if __name__ == "__main__" :
     n = 2
 
     N = int(8000)
-    h = 0.05
+    h = 0.005
     pot = Henon_Heiles
-    wn = np.array([0,0.1,0.157,0.1])
+    wn = np.array([1,0,0,1])
     E = 1/16
 
     #Plot_Trajectoires(wn, N, h, Kepler)
-    #test_solvers()
-    #test_section_poincarre(E = 1/100, h = 1e-3, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
+    #test_solvers()  
+    #test_section_poincarre(E = 1/100, h = 1e-1, N = 30000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermees
     
     
-    #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
+    #test_chaos_1(h = 1e-2, N = 10000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
     
     test_Melbourne(N, h)
-    #print(Gottwald_Melbourne_v1(wn, N, h))
-    #Chaos_Gottwald_Melbourne(N, h, 50)
-    
+ 
 
 
 
