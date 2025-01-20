@@ -11,8 +11,64 @@ import random
     
     
 
-class Melbourne_solver ():
+class Solver (object):
+    def __init__(self):
+        pass
+
+    def RK4 (self,wn, f, h, pot):
+        """apply RK4 method to a 4D phase space vector
+        :param wn: vector containing x,y position and u,v velocities
+        :param f: function giving the derivatives of the Hamiltonian
+        :param h: time step
+        :param pot: gravitational potential we consider  
+        :result: wn updated according to RK4 scheme
+        """
+        
+        k1 = f(wn[1,:,:], pot)
+        k2 = f(wn[1,:,:] + h/2 * k1, pot)
+        k3 = f(wn[1,:,:]+ h/2 * k2, pot)
+        k4 = f(wn[1,:,:]+h*k3, pot)
+
+
+        return wn[1,:,:] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
+
+
+    def Fx (self,Pot, x, y, h= 1e-3):
+        """derivation with 5 points
+        :param Pot: function we want to derive 
+        :param x: position along x axis
+        :param y: position along y axis
+        :param h: time step
+        :return: partial derivative of the function with respect to x
+        """
+        return 1/(12*h) * (-Pot(x+2*h, y)+ 8*Pot(x+h, y) - 8*Pot(x-h, y) + Pot(x-2*h, y))
+
+
+    def Fy (self,Pot, x, y, h = 1e-3):
+        """derivation with 5 points
+        :param Pot: function we want to derive 
+        :param x: position along x axis
+        :param y: position along y axis
+        :param h: time step
+        :return: partial derivative of the function with respect to y
+        """
+        return 1/(12*h) * (-Pot(x,y+2*h)+ 8*Pot(x,y+h) - 8*Pot(x,y-h) + Pot(x,y-2*h))
+
+
+    # Differential equation function
+
+    def f(self,wn, pot=Kepler):
+        """function giving the derivatives of the Hamiltonian
+        :param wn: vector containing x,y position and u,v velocities
+        :param pot: gravitational potential we consider
+        :return: array of Hamiltonian's derivatives 
+        """
+        return np.array([wn[2], wn[3], -self.Fx(pot,wn[0], wn[1]), -self.Fy(pot,wn[0], wn[1])])
+
+class Melbourne_solver (Solver):
     def __init__(self, liste_poincarres, E, h, N, Pot, c = 1.7,plot = False,Method=RK4):
+
+        Solver.__init__(self)
 
         self.E = E
         self.h = h
@@ -152,59 +208,11 @@ class Melbourne_solver ():
         
 
 
-    def RK4 (self,wn, f, h, pot):
-        """apply RK4 method to a 4D phase space vector
-        :param wn: vector containing x,y position and u,v velocities
-        :param f: function giving the derivatives of the Hamiltonian
-        :param h: time step
-        :param pot: gravitational potential we consider  
-        :result: wn updated according to RK4 scheme
-        """
-        
-        k1 = f(wn[1,:,:], pot)
-        k2 = f(wn[1,:,:] + h/2 * k1, pot)
-        k3 = f(wn[1,:,:]+ h/2 * k2, pot)
-        k4 = f(wn[1,:,:]+h*k3, pot)
 
-
-        return wn[1,:,:] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
-
-
-    def Fx (self,Pot, x, y, h= 1e-3):
-        """derivation with 5 points
-        :param Pot: function we want to derive 
-        :param x: position along x axis
-        :param y: position along y axis
-        :param h: time step
-        :return: partial derivative of the function with respect to x
-        """
-        return 1/(12*h) * (-Pot(x+2*h, y)+ 8*Pot(x+h, y) - 8*Pot(x-h, y) + Pot(x-2*h, y))
-
-
-    def Fy (self,Pot, x, y, h = 1e-3):
-        """derivation with 5 points
-        :param Pot: function we want to derive 
-        :param x: position along x axis
-        :param y: position along y axis
-        :param h: time step
-        :return: partial derivative of the function with respect to y
-        """
-        return 1/(12*h) * (-Pot(x,y+2*h)+ 8*Pot(x,y+h) - 8*Pot(x,y-h) + Pot(x,y-2*h))
-
-
-    # Differential equation function
-
-    def f(self,wn, pot=Kepler):
-        """function giving the derivatives of the Hamiltonian
-        :param wn: vector containing x,y position and u,v velocities
-        :param pot: gravitational potential we consider
-        :return: array of Hamiltonian's derivatives 
-        """
-        return np.array([wn[2], wn[3], -self.Fx(pot,wn[0], wn[1]), -self.Fy(pot,wn[0], wn[1])])
-
-
-class Poincarre_solver():
+class Poincarre_solver(Solver):
     def __init__(self, liste_poincarres, E, h, N, Pot, plot = False, deux= False, Method=RK4):
+
+        Solver.__init__ (self)
 
         self.E = E
         self.h = h
@@ -367,56 +375,6 @@ class Poincarre_solver():
 
         return nb_curve/len(self.liste_poincarre), np.mean(mus), np.std(mus)
 
-
-    def RK4 (self,wn, f, h, pot):
-        """apply RK4 method to a 4D phase space vector
-        :param wn: vector containing x,y position and u,v velocities
-        :param f: function giving the derivatives of the Hamiltonian
-        :param h: time step
-        :param pot: gravitational potential we consider  
-        :result: wn updated according to RK4 scheme
-        """
-        
-        k1 = f(wn[1,:,:], pot)
-        k2 = f(wn[1,:,:] + h/2 * k1, pot)
-        k3 = f(wn[1,:,:]+ h/2 * k2, pot)
-        k4 = f(wn[1,:,:]+h*k3, pot)
-
-
-        return wn[1,:,:] + h/6 * (k1 + 2*k2 + 2*k3 + k4)
-
-
-    def Fx (self,Pot, x, y, h= 1e-3):
-        """derivation with 5 points
-        :param Pot: function we want to derive 
-        :param x: position along x axis
-        :param y: position along y axis
-        :param h: time step
-        :return: partial derivative of the function with respect to x
-        """
-        return 1/(12*h) * (-Pot(x+2*h, y)+ 8*Pot(x+h, y) - 8*Pot(x-h, y) + Pot(x-2*h, y))
-
-
-    def Fy (self,Pot, x, y, h = 1e-3):
-        """derivation with 5 points
-        :param Pot: function we want to derive 
-        :param x: position along x axis
-        :param y: position along y axis
-        :param h: time step
-        :return: partial derivative of the function with respect to y
-        """
-        return 1/(12*h) * (-Pot(x,y+2*h)+ 8*Pot(x,y+h) - 8*Pot(x,y-h) + Pot(x,y-2*h))
-
-
-    # Differential equation function
-
-    def f(self,wn, pot=Kepler):
-        """function giving the derivatives of the Hamiltonian
-        :param wn: vector containing x,y position and u,v velocities
-        :param pot: gravitational potential we consider
-        :return: array of Hamiltonian's derivatives 
-        """
-        return np.array([wn[2], wn[3], -self.Fx(pot,wn[0], wn[1]), -self.Fy(pot,wn[0], wn[1])])
 
 
 class Poincarre_test ():

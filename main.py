@@ -298,14 +298,14 @@ if __name__ == "__main__" :
     wn = np.array([0,0.1,0.157,0.1])
     E = 1/16
 
-    Plot_Trajectoires(wn, N, h, Kepler)
+    #Plot_Trajectoires(wn, N, h, Kepler)
     #test_solvers()
     #test_section_poincarre(E = 1/100, h = 1e-3, N = 100000, pot = Henon_Heiles)    # Choisir N assez grand pour avoir des orbites fermÃ©es
     
     
     #test_chaos_1(h = 1e-1, N = 1000, pot = Henon_Heiles)                             # Choisir N plus petit pour avoir 25 points dans la section de poincarrÃ©
     
-    #test_Melbourne(N, h)
+    test_Melbourne(N, h)
     #print(Gottwald_Melbourne_v1(wn, N, h))
     #Chaos_Gottwald_Melbourne(N, h, 50)
     
