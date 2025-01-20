@@ -249,7 +249,7 @@ if __name__ == "__main__" :
 
     n = 2
 
-    N = int(8000)
+    N = int(80000)
     h = 0.005
     pot = Henon_Heiles
     wn = np.array([1,0,0,1])
