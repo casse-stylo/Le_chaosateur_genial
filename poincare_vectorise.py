@@ -66,7 +66,7 @@ class Solver (object):
         return np.array([wn[2], wn[3], -self.Fx(pot,wn[0], wn[1]), -self.Fy(pot,wn[0], wn[1])])
 
 class Melbourne_solver (Solver):
-    def __init__(self, liste_poincarres, E, h, N, Pot, c = 1.7,plot = False,Method=RK4):
+    def __init__(self, liste_particules, E, h, N, Pot, c = 1.7,plot = False,Method=RK4):
 
         Solver.__init__(self)
 
@@ -83,14 +83,14 @@ class Melbourne_solver (Solver):
         self.p = []
 
 
-        for p in liste_poincarres :
+        for p in liste_particules :
             self.yi.append(p.yi)
             self.vi.append(p.vi)
 
-        ntraj = len(liste_poincarres)
+        ntraj = len(liste_particules)
 
-        self.liste_poincarre = np.array(liste_poincarres)
-        self.epsilon = liste_poincarres[0].epsilon
+        self.liste_particules = np.array(liste_particules)
+        self.epsilon = liste_particules[0].epsilon
 
 
         self.yi = np.array(self.yi)
@@ -121,7 +121,7 @@ class Melbourne_solver (Solver):
             Trajectoires[:,_,2] = wn[1,2,:]            
             Trajectoires[:,_,3] = wn[1,3,:]
           
-        self.liste_poincarre = liste_poincarres
+        self.liste_particules = liste_particules
         self.Trajectoires = Trajectoires
 
         if plot :
@@ -132,7 +132,7 @@ class Melbourne_solver (Solver):
 
     def plot (self, deux = False):
 
-        for p in self.liste_poincarre :
+        for p in self.liste_particules :
             p.plot(deux)
 
         plt.show()
@@ -148,7 +148,7 @@ class Melbourne_solver (Solver):
         liste_a = []
         plot = False
 
-        for i in range(len(self.liste_poincarre)) :
+        for i in range(len(self.liste_particules)) :
 
         
             #t= np.linspace(0, N*h, N)
@@ -202,7 +202,7 @@ class Melbourne_solver (Solver):
         print(np.median(liste_a))
         
         if calibre :
-            return nb_curve/len(self.liste_poincarre)
+            return nb_curve/len(self.liste_particules)
         else :
             return np.median(liste_a)
         
@@ -210,7 +210,7 @@ class Melbourne_solver (Solver):
 
 
 class Poincarre_solver(Solver):
-    def __init__(self, liste_poincarres, E, h, N, Pot, plot = False, deux= False, Method=RK4):
+    def __init__(self, liste_particules, E, h, N, Pot, plot = False, deux= False, Method=RK4):
 
         Solver.__init__ (self)
 
@@ -226,15 +226,15 @@ class Poincarre_solver(Solver):
         self.vi2 = []
 
 
-        for p in liste_poincarres :
+        for p in liste_particules :
             self.yi.append(p.yi)
             self.vi.append(p.vi)
 
             self.yi2.append(p.yi2)
             self.vi2.append(p.vi2)
 
-        self.liste_poincarre = np.array(liste_poincarres)
-        self.epsilon = liste_poincarres[0].epsilon
+        self.liste_particules = np.array(liste_particules)
+        self.epsilon = liste_particules[0].epsilon
 
 
         self.yi = np.array(self.yi)
@@ -278,8 +278,8 @@ class Poincarre_solver(Solver):
 
                 for s in range(len(y0)):
 
-                    liste_poincarres[indices[0][s]].ylist.append(y0[s])
-                    liste_poincarres[indices[0][s]].vlist.append(v0[s])
+                    liste_particules[indices[0][s]].ylist.append(y0[s])
+                    liste_particules[indices[0][s]].vlist.append(v0[s])
 
             if deux :
 
@@ -298,12 +298,12 @@ class Poincarre_solver(Solver):
                 if np.shape(y02) !=(0,):
 
                     for s in range(len(y02)):
-                        #print(liste_poincarres[signes2[s]])
+                        #print(liste_particules[signes2[s]])
 
-                        liste_poincarres[indices2[0][s]].ylist2.append(y02[s])
-                        liste_poincarres[indices2[0][s]].vlist2.append(v02[s])
+                        liste_particules[indices2[0][s]].ylist2.append(y02[s])
+                        liste_particules[indices2[0][s]].vlist2.append(v02[s])
 
-        self.liste_poincarre = liste_poincarres
+        self.liste_particules = liste_particules
 
         if plot :
             self.plot(deux = deux)
@@ -311,7 +311,7 @@ class Poincarre_solver(Solver):
 
     def plot (self, deux = False):
 
-        for p in self.liste_poincarre :
+        for p in self.liste_particules :
             p.plot(deux)
 
         plt.show()
@@ -327,7 +327,7 @@ class Poincarre_solver(Solver):
         
         plot = False
 
-        for p in self.liste_poincarre :
+        for p in self.liste_particules :
             # we need to count the number of points in the Poincare section for each trajectory
 
     
@@ -373,11 +373,11 @@ class Poincarre_solver(Solver):
         plt.axhline(np.mean(mus)+np.std(mus))
         plt.show()"""
 
-        return nb_curve/len(self.liste_poincarre), np.mean(mus), np.std(mus)
+        return nb_curve/len(self.liste_particules), np.mean(mus), np.std(mus)
 
 
 
-class Poincarre_test ():
+class Particule ():
     def __init__ (self, E, h, N, Pot, Method=RK4,epsilon = 1e-8):
 
         self.E = E

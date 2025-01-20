@@ -155,13 +155,13 @@ def test_section_poincarre(E, h, N, pot, ntraj = 50):
 
     # Trace les sections de poincarre
 
-    liste_poincarres = []
+    liste_particules = []
 
     for _ in range(ntraj):
 
-        liste_poincarres.append(Poincarre_test(E,h,N,pot))
+        liste_particules.append(Particule(E,h,N,pot))
 
-    Poincarre_solver(liste_poincarres,E,h,N,pot,deux=False, plot=True)
+    Poincarre_solver(liste_particules,E,h,N,pot,deux=False, plot=True)
 
 def test_chaos_1 (h, N, pot):
 
@@ -182,13 +182,13 @@ def test_chaos_1 (h, N, pot):
                 
         print("E = "+str(E))
 
-        liste_poincarres = []
+        liste_particules = []
 
         for j in range(1000):
 
-            liste_poincarres.append(Poincarre_test(E,h,N,pot))
+            liste_particules.append(Particule(E,h,N,pot))
 
-        solver = Poincarre_solver(liste_poincarres,E,h,N,pot,deux=True, plot=False)
+        solver = Poincarre_solver(liste_particules,E,h,N,pot,deux=True, plot=False)
         mesure = solver.Chaos_measure(muc=5e-2)
         Resultat_chaos[i] = mesure[0]
         mu_moyen[i] = mesure[1]
@@ -223,12 +223,12 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
     mu_moyen = np.zeros(len(liste_E))
     mu_std = np.zeros(len(liste_E))
 
-    liste_poincarres = []
+    liste_particules = []
 
-    for j in range(1000):
+    for j in range(100):
 
-            liste_poincarres.append(Poincarre_test(E_50,h,N,pot))
-    solver = Melbourne_solver(liste_poincarres,E_50,h,N,pot, plot=False)
+            liste_particules.append(Particule(E_50,h,N,pot))
+    solver = Melbourne_solver(liste_particules,E_50,h,N,pot, plot=False)
     a_crit = solver.Chaos_measure(calibre = False)
     
     for i in range(len(liste_E)) :
@@ -237,13 +237,13 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
                 
         print("E = "+str(E))
 
-        liste_poincarres = []
+        liste_particules = []
 
-        for j in range(1000):
+        for j in range(100):
 
-            liste_poincarres.append(Poincarre_test(E,h,N,pot))
+            liste_particules.append(Particule(E,h,N,pot))
 
-        solver = Melbourne_solver(liste_poincarres,E,h,N,pot, plot=False)
+        solver = Melbourne_solver(liste_particules,E,h,N,pot, plot=False)
         mesure = solver.Chaos_measure(a_crit=a_crit, calibre = True)
         Resultat_chaos[i] = mesure
 
@@ -255,36 +255,6 @@ def test_Melbourne (N,h,pot=Henon_Heiles, E_50 = 0.14):
     
     plt.legend()
     plt.show()
-
-    """
-
-    liste_E = np.arange(0.02,0.165,0.02)
-    liste_a = []
-
-    for i in range(len(liste_E)) :
-        
-        E = liste_E[i]
-                
-        print("E = "+str(E))
-
-        liste_poincarres = []
-
-
-        p = Poincarre_test(E,h,N,pot)
-        wn = np.array([0,p.yi,np.sqrt(2*(E-pot(0,p.yi))-p.vi**2),p.vi])
-
-        liste_a.append(Gottwald_Melbourne_v1(wn,N,h))
-
-    liste_a = np.array(liste_a)
-    plt.plot(liste_E, liste_a)
-
-    axes = plt.gca()
-    axes.set_xlabel("E [J]")
-    #axes.set_ylabel(r"$K = \lim_{+\inf} \log M(t) / \log t$")
-    axes.set_ylabel(r"Proportion ergodique")
-
-    plt.show()"""
-
 
 
 
